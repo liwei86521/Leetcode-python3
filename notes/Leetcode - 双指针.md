@@ -291,3 +291,363 @@ class Solution:
         
 ```
 
+## 9. 删除链表的倒数第N个节点
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。给定的 n 保证是有效的
+
+19\. 删除链表的倒数第N个节点（middle） [力扣](https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/description/)
+
+示例 1:
+
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+
+
+```python
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        
+        dummy = ListNode(-1) # 哨兵节点避免方便边界条件处理
+        dummy.next = head
+
+        # 给定的 n 保证是有效的，n 最大为链表的长度 且n一定是大于0的，所以不需要考虑链表是否为空
+        fast, slow = dummy, dummy
+
+        while n >= 0: # fast 指针先走
+            fast = fast.next
+            n = n -1
+
+        while fast != None: # slow和fast再同时走
+            slow = slow.next
+            fast = fast.next
+
+        slow.next = slow.next.next # 删除倒数节点
+
+        return dummy.next
+        
+``` 
+
+## 10. 盛最多水的容器
+给你 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+11\. 盛最多水的容器（middle） [力扣](https://leetcode-cn.com/problems/container-with-most-water/description/)
+
+示例 1:
+
+<img style="height: 287px; width: 600px;" src="https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/uploads/2018/07/25/question_11.jpg" alt="">
+
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49 
+解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+
+
+```python
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        #双指针法
+        left = 0
+        right = len(height) - 1
+        area = 0
+        
+        while left < right:
+            cur = min(height[left], height[right]) * (right - left)
+            area = max(area, cur)
+            # 将容量小的指针向数组内部移动，下一个矩阵面积才有可能比当前面积大
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+            
+        return area     
+
+``` 
+
+## 11. 环形链表 II
+给定一个链表，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+
+为了表示给定链表中的环，我们使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。 如果 pos 是 -1，则在该链表中没有环。注意，pos 仅仅是用于标识环的情况，并不会作为参数传递到函数中。
+
+142\. 环形链表 II（middle） [力扣](https://leetcode-cn.com/problems/linked-list-cycle-ii/description/)
+
+示例 1:
+
+<img style="height: 97px; width: 300px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist.png" alt="">
+
+输入：head = [3,2,0,-4], pos = 1
+输出：返回索引为 1 的链表节点
+解释：链表中有一个环，其尾部连接到第二个节点。
+
+
+```python
+class Solution:
+    def detectCycle(self, head: ListNode) -> ListNode:
+        if head == None:
+            return None
+
+        p, q = head, head #步骤一：使用快慢指针判断链表是否有环，找到快慢指针的相遇节点(meet = p)
+        flagCycle = 0
+        #while q.next != None and q.next.next != None:# q为快指针（ps： 因为and的性质）OK
+        while q != None and q.next != None:# q为快指针（ps： 因为and的性质）推荐
+            p = p.next
+            q = q.next.next
+            if p == q:# 有环的话一定会在某个位置相等
+                flagCycle = 1
+                break # 退出while循环
+
+        # 步骤二：若有环，找到入环开始的节点，(从head和meet同时出发，两指针速度一样，相遇时的节点就是入环口) 
+        if flagCycle:
+            cur = head
+            while p != cur:
+                p = p.next
+                cur = cur.next
+            return cur
+        else:
+            return None    
+
+``` 
+
+## 12. 螺旋矩阵 II
+给定一个正整数 n，生成一个包含 1 到 n2 所有元素，且元素按顺时针顺序螺旋排列的正方形矩阵
+
+59\. 螺旋矩阵 II（middle） [力扣](https://leetcode-cn.com/problems/spiral-matrix-ii/description/)
+
+示例 1:
+
+输入: 3
+输出:
+[
+ [ 1, 2, 3 ],
+ [ 8, 9, 4 ],
+ [ 7, 6, 5 ]
+]
+
+
+```python
+class Solution:
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        #还是模拟过程,控制好边界,行的上下边界, 列的左右边界, 很经典
+        
+        res = [[0] * n for _ in range(n)] # 把结果矩阵全置0,然后下面按规则填充值
+        
+        above_row = 0 #上边界index
+        below_row = n-1 #下边界index
+        left_col = 0 #左边界index
+        right_col = n - 1 #右边界index
+        
+        num = 1 #填充的初始值设置为1
+
+        while(above_row <= below_row and left_col <= right_col):
+            # 从左到右循环
+            for i in range(left_col, right_col+1):
+                res[above_row][i] = num #ps: 这里用above_row，是因为马上要更新它
+                num = num + 1
+            #更新above_row，上边界index加1
+            above_row = above_row + 1
+
+            # 从上到下循环
+            for i in range(above_row, below_row + 1):
+                res[i][right_col] = num  # ps: 这里用right_col，是因为马上要更新它
+                num = num + 1
+            # 更新right_col，右边界index减1
+            right_col = right_col - 1
+
+            # 从右到左循环
+            for i in range(right_col, left_col-1, -1):
+                res[below_row][i] = num  # ps: 这里用below_row，是因为马上要更新它
+                num = num + 1
+            # 更新below_row，下边界index减1
+            below_row = below_row - 1
+
+            # 从下到上循环
+            for i in range(below_row, above_row-1, -1):
+                res[i][left_col] = num  # ps: 这里用left_col，是因为马上要更新它
+                num = num + 1
+            # 更新left_col，右边界index加1
+            left_col = left_col + 1
+
+        return res   
+
+```
+
+## 13. 螺旋矩阵
+给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。
+
+54\. 螺旋矩阵（middle） [力扣](https://leetcode-cn.com/problems/spiral-matrix/description/)
+
+示例 1:
+
+输入:
+[
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9,10,11,12]
+]
+输出: [1,2,3,4,8,12,11,10,9,5,6,7]
+
+
+```python
+class Solution:
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        #与 59. 螺旋矩阵 II 是一样的意思,但是由于不是方形的，边界不能套用
+        if len(matrix) == 0:
+            return []
+
+        rows = len(matrix)
+        cols = len(matrix[0])
+        left, right, low, high = 0, cols - 1, 0, rows - 1
+
+        res = []
+
+        while left <= right and low <= high:
+            # left ---> right
+            for i in range(left, right+1):
+                res.append(matrix[low][i])
+            low = low + 1
+            if low > high:
+                break  # 退出while 循环
+
+            # low ---> high
+            for i in range(low, high+1):
+                res.append(matrix[i][right])
+            right = right - 1
+            if left > right:
+                break  # 退出while 循环
+
+            # right ---> left
+            for j in range(right, left-1, -1):
+                res.append(matrix[high][j])
+            high = high - 1
+            if low > high:
+                break  # 退出while 循环
+
+            # high ---> low
+            for j in range(high, low-1, -1):
+                res.append(matrix[j][left])
+            left = left + 1
+            if left > right:
+                break  # 退出while 循环
+
+        return res 
+
+``` 
+
+## 14. 三数之和
+给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+
+15\. 三数之和（middle） [力扣](https://leetcode-cn.com/problems/3sum/description/)
+
+示例 1:
+
+给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+
+
+
+```python
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        # 经典双指针问题,注意先排序，还有去重
+        # 注意与 16. 最接近的三数之和 比较不同
+        nums.sort() # 排序是为了 方便双指针移动
+        n = len(nums)
+        res = []
+        for i in range(n-2):
+            # [-1,0,1,2,-1,-4] --->如果注释这句 结果为 [[-1,-1,2],[-1,0,1],[-1,0,1]]
+            if i > 0 and nums[i] == nums[i - 1]: 
+                continue #去重,[-2,-2, 0,1,1,2]即第二个 -2就不需要进行下面的循环了，否则会产生重复元素
+
+            left = i + 1
+            right = n - 1
+            while left < right:
+                add = nums[i] + nums[left] + nums[right] # 固定一个数求和
+                if add == 0:
+                    tmp = [nums[i], nums[left], nums[right]]
+                    res.append(tmp) # nums = [0,0,0,0,0], 这里2个while循环就是去重的
+                    #[[0,0,0],[0,0,0]] ---> [[0,0,0]]
+                    while left+1 < right and nums[left] == nums[left + 1]:
+                        left += 1
+                    while left < right -1 and nums[right] == nums[right - 1]:
+                        right -= 1
+
+                    left += 1 # add等于0是 left += 1，right -= 1， 否则进入死循环
+                    right -= 1
+
+                elif add > 0:
+                    right -= 1 ## 否则就是大了 right左移
+                else:
+                    left += 1 # 小了就 left 右移
+        return res
+
+``` 
+
+## 15. 最短无序连续子数组
+给定一个整数数组，你需要寻找一个连续的子数组，如果对这个子数组进行升序排序，那么整个数组都会变为升序排序。
+
+你找到的子数组应是最短的，请输出它的长度。
+
+
+581\. 最短无序连续子数组（middle） [力扣](https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/description/)
+
+示例 1:
+
+输入: [2, 6, 4, 8, 10, 9, 15]
+输出: 5
+解释: 你只需要对 [6, 4, 8, 10, 9] 进行升序排序，那么整个表都会变为升序排序。
+
+```python
+class Solution:
+    def findUnsortedSubarray(self, nums: List[int]) -> int:
+        # 先排序，再双指针
+        sorted_nums = sorted(nums)
+        i = 0 # 左指针
+        j = len(nums) - 1 # 右指针
+        while i <= j and sorted_nums[i] == nums[i]: # 比较右边2列表的相等值得个数
+            i += 1
+            
+        while j >= i and sorted_nums[j] == nums[j]:
+            j -= 1
+        return j - i + 1
+
+``` 
+
+## 16. 长度最小的子数组
+给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的 连续 子数组，并返回其长度。如果不存在符合条件的子数组，返回 0。
+
+209\. 长度最小的子数组（middle） [力扣](https://leetcode-cn.com/problems/minimum-size-subarray-sum/description/)
+
+示例 1:
+
+输入：s = 7, nums = [2,3,1,2,4,3]
+输出：2
+解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+
+```python
+class Solution:
+    def minSubArrayLen(self, s: int, nums: List[int]) -> int:
+        # 双指针
+        if len(nums) == 0:
+            return 0
+
+        min_len = len(nums) + 1 # 定义最小值，因为最小值不可能大于它
+        j = 0 
+        sums = 0 # 求和
+        for i in range(len(nums)):
+            sums += nums[i]
+            while (sums >= s):
+                min_len = min(min_len, i - j+1)
+                #print("ok ---> ", nums[j:i+1])
+                sums = sums - nums[j]
+                j += 1 # 用于下次比较
+
+        #print(nums[j: j + (i - j) + 1]) # 这个就是满足条件的 子数组
+        return 0 if min_len == len(nums) + 1 else min_len
+
+``` 
