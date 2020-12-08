@@ -13,7 +13,10 @@
         * [2. 不同路径](#2-不同路径)
         * [3. 不同路径 II](#2-不同路径-II)
         * [4. 三角形最小路径和](#2-三角形最小路径和)
-        
+    * [分割整数](#分割整数)
+        * [1. 完全平方数](#1-完全平方数)
+        * [2. 解码方法](#2-解码方法)
+        * [3. 丑数](#3-丑数)
         
 <!-- GFM-TOC -->
 
@@ -489,5 +492,157 @@ class Solution:
                 triangle[row][col] += min(triangle[row+1][col], triangle[row+1][col+1])
 
         return triangle[0][0]
+
+``` 
+
+## 分割整数
+## 1. 完全平方数
+给定正整数 n，找到若干个完全平方数（比如 1, 4, 9, 16, ...）使得它们的和等于 n。你需要让组成和的完全平方数的个数最少。
+
+279\. 完全平方数（middle） [力扣](https://leetcode-cn.com/problems/perfect-squares/description/description/)
+
+示例 1:
+
+```html
+
+输入: n = 12
+输出: 3 
+解释: 12 = 4 + 4 + 4.
+
+输入: n = 13
+输出: 2
+解释: 13 = 4 + 9.
+
+```
+
+```python
+class Solution:
+    def numSquares(self, n: int) -> int:
+        # 典型的DP问题
+        dp = [i for i in range(n + 1)] # 初始值设置，理解
+        for i in range(2, n + 1):
+            for j in range(1, int(i ** (0.5)) + 1):#range(1, i) 会超时
+                # 这里就不用 if和break了，这样大大降低了运算时间
+                dp[i] = min(dp[i], dp[i - j * j] + 1) # 重点理解
+
+        return dp[n]
+
+``` 
+
+
+## 2. 解码方法
+一条包含字母 A-Z 的消息通过以下方式进行了编码：
+
+```html
+
+'A' -> 1
+'B' -> 2
+...
+'Z' -> 26
+
+```
+
+给定一个只包含数字的非空字符串，请计算解码方法的总数。
+
+题目数据保证答案肯定是一个 32 位的整数。
+
+91\. 解码方法（middle） [力扣](https://leetcode-cn.com/problems/decode-ways/description/)
+
+示例 1:
+
+```html
+
+输入：s = "12"
+输出：2
+解释：它可以解码为 "AB"（1 2）或者 "L"（12）。
+
+输入：s = "226"
+输出：3
+解释：它可以解码为 "BZ" (2 26), "VF" (22 6), 或者 "BBF" (2 2 6) 。
+
+输入：s = "0"
+输出：0
+
+输入：s = "1"
+输出：1
+
+输入：s = "2"
+输出：1
+
+```
+
+
+```python
+class Solution:
+    def numDecodings(self, s: str) -> int:
+        #给定一个只包含数字的 非空 字符串，请计算解码方法的总数
+        #如果包含连续的0两个及以上,一定无解码方法,直接返回0
+        #dp[i]表示长度为i的s的解码总数
+        # 该题为带条件的 dp[i] = dp[i-2] + dp[i-1]， 画图
+
+        n = len(s)
+        if n==0 or s[0] =="0": # 注意是 s[0]  eg: "01"
+            return 0
+        
+        dp =[0] * (n+1) # 要处理 "10"，"20" 
+        dp[0], dp[1] = 1, 1 # 初始值设置
+        
+        # len(s)>=2 case
+        for i in range(2, n + 1):
+            tmp = int(s[i-2:i]) # eg：s[1:3] --> 有2位数
+            if tmp == 0 : # 连续2个0 一定没有解码的方法
+                return 0
+            
+            # 最后剩2位数字  则：dp[i] += dp[i-2]， 这样就有 f(n-2) 成立
+            if 10 <= tmp <= 26: # tmp至少第一位数不为0，最后2位能一起翻译
+                dp[i] += dp[i-2]
+            
+            # 最后剩1位数字，则 dp[i] += dp[i-1]，最后一位不为0 f(n-1) 成立
+            #if s[i-1] != '0': # tmp第二位数不为0，最后1位能一起翻译
+            if tmp % 10 != 0: # tmp第二位数不为0，最后1位能一起翻译
+                dp[i] += dp[i-1]  # "12340"  --> 结果为 解码方法总数 == 0
+                
+        return dp[n] #dp[n] 即 dp[-1]
+
+``` 
+
+## 3. 丑数
+我们把只包含质因子 2、3 和 5 的数称作丑数（Ugly Number）。求按从小到大的顺序的第 n 个丑数。
+ps: 1 是丑数
+
+
+119\. 丑数（middle） [力扣](https://leetcode-cn.com/problems/chou-shu-lcof/description/)
+
+示例 1:
+
+```html
+
+输入: n = 10
+输出: 12
+解释: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 是前 10 个丑数。
+
+```
+
+```python
+class Solution:
+    def nthUglyNumber(self, n: int) -> int:
+        # 典型 DP 
+        dp = [1] * n
+        a, b, c = 0, 0, 0
+
+        for i in range(1, n):
+            n2, n3, n5 = dp[a] * 2, dp[b] * 3, dp[c] * 5
+            dp[i] = min(n2, n3, n5)
+
+            # if dp[i] == n2: a += 1
+            # elif dp[i] == n3: b += 1
+            # else: c += 1 # ps 上面是错的，用下面的替代
+            #因为 a和c可能同时 +1  5*2， 2*5
+
+            if dp[i] == n2: a += 1
+            if dp[i] == n3: b += 1
+            if dp[i] == n5: c += 1
+
+        return dp[-1]
 
 ``` 
