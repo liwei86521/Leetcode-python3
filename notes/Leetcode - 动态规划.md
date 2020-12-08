@@ -17,6 +17,12 @@
         * [1. 完全平方数](#1-完全平方数)
         * [2. 解码方法](#2-解码方法)
         * [3. 丑数](#3-丑数)
+    * [子序列问题](#子序列问题)
+        * [1. 子数组最大平均数 I](#1-子数组最大平均数-I)
+        * [2. 最大子序和](#2-最大子序和)
+        * [3. 最长连续递增序列](#3-最长连续递增序列)
+        * [4. 乘积最大子数组](#4-乘积最大子数组)
+        * [5. 最长上升子序列](#5-最长上升子序列)
         
 <!-- GFM-TOC -->
 
@@ -646,3 +652,214 @@ class Solution:
         return dp[-1]
 
 ``` 
+
+## 子序列问题
+## 1. 子数组最大平均数 I
+给定 n 个整数，找出平均数最大且长度为 k 的连续子数组，并输出该最大平均数。 1 <= k <= n <= 30,000
+
+643\. 子数组最大平均数 I（easy） [力扣](https://leetcode-cn.com/problems/maximum-average-subarray-i/description/)
+
+示例 1:
+
+```html
+输入: [1,12,-5,-6,50,3], k = 4
+输出: 12.75
+解释: 最大平均数 (12-5-6+50)/4 = 51/4 = 12.75
+```
+
+```python
+class Solution:
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        # 条件 1 <= k <= n <= 30,000
+        moving_sum = sum(nums[:k])
+
+        res = moving_sum
+        for j in range(k, len(nums)):
+            moving_sum = moving_sum - nums[j-k] + nums[j]
+            if moving_sum > res :
+                res = moving_sum
+                
+        return  res/k
+
+``` 
+
+## 2. 最大子序和
+给定一个整数数组 nums ，找到一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。
+
+53\. 最大子序和（easy） [力扣](https://leetcode-cn.com/problems/maximum-subarray/description/)
+
+示例 1:
+
+```html
+输入: [-2,1,-3,4,-1,2,1,-5,4]
+输出: 6
+解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+```
+
+```python
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        # 定义状态：dp[i] 表示以 nums[i] 结尾的连续子数组的最大和
+        #状态转移方程：dp[i] = max{num[i], dp[i - 1] + num[i]}
+
+        n = len(nums) # 时间复杂度：O(N)， 空间复杂度：O(N)
+        if n == 1:
+            return nums[0]
+
+        dp = [0 for _ in range(n)]
+        dp[0] = nums[0]
+        for i in range(1, n):
+            dp[i] = max(dp[i - 1] + nums[i], nums[i])
+
+        # 最后不要忘记 求一遍最大值，或者在上面遍历的时候，就保存最大值
+        return max(dp) #max(dp)
+
+    """# 改进版 既然当前状态只与上一个状态有关，时间复杂度：O(N)，空间复杂度O(1)
+    def maxSubArray(self, nums):
+        ret = dp = nums[0]
+        for i in range(1, len(nums)):
+            dp = max(dp + nums[i], nums[i])
+            ret = max(dp, ret)
+        return ret
+    
+    """
+
+``` 
+
+## 3. 最长连续递增序列
+给定一个未经排序的整数数组，找到最长且 **连续递增的子序列**，并返回该序列的长度。
+
+674\. 最长连续递增序列（easy） [力扣](https://leetcode-cn.com/problems/longest-continuous-increasing-subsequence/description/)
+
+示例 1:
+
+```html
+输入：nums = [1,3,5,4,7]
+输出：3
+解释：最长连续递增序列是 [1,3,5], 长度为3。
+尽管 [1,3,5,7] 也是升序的子序列, 但它不是连续的，因为 5 和 7 在原数组里被 4 隔开。 
+
+输入：nums = [2,2,2,2,2]
+输出：1
+解释：最长连续递增序列是 [2], 长度为1。
+
+```
+
+```python
+class Solution:
+    def findLengthOfLCIS(self, nums: List[int]) -> int:
+        # 动态规划的思想 压缩空间复杂度为 O(1)
+        if not nums: return 0
+        # dp 表示以i结尾最长连续1的个数
+        dp, res = 1, 1 # 注意初始值设置
+        for i in range(1, len(nums)):
+            if nums[i] > nums[i-1]:
+                dp = dp + 1
+                res = max(dp, res)
+            else:
+                dp = 1 # 重置 dp
+
+        return res
+
+    '''
+    def findLengthOfLCIS(self, nums: List[int]) -> int:
+
+        if not nums: return 0
+        # dp[i] 表示以i结尾最长连续1的个数
+        dp = [1] * len(nums) # 注意初始值设置
+        for i in range(1, len(nums)):
+            if nums[i] > nums[i-1]:
+                dp[i] = dp[i-1] + 1
+
+        return max(dp)
+
+    '''
+
+``` 
+
+## 4. 乘积最大子数组
+
+给你一个整数数组 nums ，请你找出数组中乘积最大的连续子数组（该子数组中至少包含一个数字），并返回该子数组所对应的乘积。
+
+152\. 乘积最大子数组（middle） [力扣](https://leetcode-cn.com/problems/maximum-product-subarray/description/)
+
+示例 1:
+
+```html
+输入: [2,3,-2,4]
+输出: 6
+解释: 子数组 [2,3] 有最大乘积 6。
+
+输入: [-2,0,-1]
+输出: 0
+解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+
+```
+
+```python
+class Solution:
+    def maxProduct(self, nums: List[int]) -> int:
+        if not nums:return 0
+        
+        # 维护2个dp 一个存最大值，一个存最小值
+        dp_max = [0] * len(nums)
+        dp_min = [0] * len(nums)
+        dp_max[0] = dp_min[0] = nums[0]
+        
+        # 如果数组的数是负数，那么会导致最大的变最小的，最小的变最大的。
+        # dp_max[i]表示以i位置结尾的最大乘积
+        for i in range(1, len(nums)):
+            dp_max[i] = max(dp_max[i - 1] * nums[i], dp_min[i - 1] * nums[i], nums[i])
+            dp_min[i] = min(dp_min[i - 1] * nums[i], dp_max[i - 1] * nums[i], nums[i])
+        
+        return max(dp_max)
+
+``` 
+
+## 5. 最长上升子序列
+
+给定一个无序的整数数组，找到其中最长上升子序列的长度
+可能会有多种最长上升子序列的组合，你只需要输出对应的长度即可
+
+300\. 最长上升子序列（middle） [力扣]https://leetcode-cn.com/problems/longest-increasing-subsequence/description/)
+
+示例 1:
+
+```html
+输入: [10,9,2,5,3,7,101,18]
+输出: 4 
+解释: 最长的上升子序列是 [2,3,7,101]，它的长度是 4。
+
+```
+
+```python
+class Solution:
+    def lengthOfLIS(self, nums: List[int]) -> int:
+
+        #定义状态：dp[i] 表示以第 i 个数字为结尾的最长上升子序列的长度。即在 [0, ..., i] 的范围内，
+        #选择 以数字 nums[i] 结尾 可以获得的最长上升子序列的长度
+        """
+        转移方程： 设 j∈[0,i)，考虑每轮计算新 dp[i]时，遍历 [0,i)列表区间，做以下判断：
+        当 nums[i] > nums[j]时: nums[i]可以接在 nums[j] 之后（此题要求严格递增），此情况下最长上升子序列长度为 dp[j] + 1
+        当 nums[i] <= nums[j]时: nums[i] 无法接在 nums[j] 之后，此情况上升子序列不成立，跳过。
+        转移方程： dp[i] = max(dp[i], dp[j] + 1) for j in [0, i)
+        """
+        if not nums:return 0
+            
+        n =len(nums)
+        dp = [1] * n  # 初始赋值
+        for i in range(1, n):
+            for j in range(i):
+                if nums[i] > nums[j]:
+                    # dp[j]表示 nums[0…j] 中以nums[j] 结尾的最长上升子序列
+                    dp[i] = max(dp[j] + 1, dp[i]) # 好巧妙， dp[i]可能会改变多次
+
+        print('dp --> ',dp)
+        return max(dp)
+        # 为什么要max（dp[j]+1 ,dp[i]）,解释如下
+        # [1,3,6,7,9,4,10,5,6] 对于4，如果不用max(dp[j]+1,dp[i]),那 
+        # 么dp['4'] 等于3，当求10，dp['10']时候，10>4,则dp['10'] = 
+        # dp['4']+1=4,所以最后max(dp),答案为5，而不是6
+
+``` 
+
