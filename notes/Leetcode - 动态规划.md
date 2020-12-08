@@ -8,8 +8,10 @@
         * [4. 打家劫舍](#4-打家劫舍)
         * [5. 打家劫舍 II](#5-打家劫舍-II)
     * [矩阵路径](#矩阵路径)
-        * [1. 矩阵的最小路径和](#1-矩阵的最小路径和)
-        * [2. 矩阵的总路径数](#2-矩阵的总路径数)
+        * [1. 最小路径和](#1-最小路径和)
+        * [2. 不同路径](#2-不同路径)
+        * [3. 不同路径 II](#2-不同路径-II)
+        * [4. 三角形最小路径和](#2-三角形最小路径和)
         
         
 <!-- GFM-TOC -->
@@ -259,3 +261,191 @@ class Solution:
         return max(rob_helper(nums[0:-1]), rob_helper(nums[1:]))
  
  ```
+
+## 矩阵路径
+## 1. 最小路径和
+给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。 说明：每次只能向下或者向右移动一步。
+
+64\. 最小路径和（middle） [力扣](https://leetcode-cn.com/problems/minimum-path-sum/description/)
+
+示例 1:
+
+<img style="width: 242px; height: 242px;" src="https://assets.leetcode.com/uploads/2020/11/05/minpath.jpg" alt="">
+
+输入：grid = [[1,3,1],[1,5,1],[4,2,1]]
+输出：7
+
+解释：因为路径 1→3→1→1→1 的总和最小。
+
+```python
+class Solution:
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        # 二维动态规划
+        m = len(grid)
+        if m < 1: return 0
+
+        n = len(grid[0])
+        if n < 1: return 0
+
+        dp = [[0] * n for _ in range(m)] # ***
+        dp[0][0] = grid[0][0]
+
+        # 第一列和第一行 dp初始值设置
+        for i in range(1, m):
+            dp[i][0] = dp[i-1][0] + grid[i][0]
+
+        for j in range(1, n):
+            dp[0][j] = dp[0][j-1] + grid[0][j]
+
+        for i in range(1, m):
+            for j in range(1, n): # 状态转移方程
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
+
+        return dp[m-1][n-1]
+
+``` 
+
+## 2. 不同路径
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+问总共有多少条不同的路径？
+
+
+62\. 不同路径（middle） [力扣](https://leetcode-cn.com/problems/unique-paths/description/)
+
+示例 1:
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/robot_maze.png">
+
+例如，上图是一个7 x 3 的网格。有多少可能的路径？
+
+输入: m = 7, n = 3     
+输出: 28
+
+
+```python
+class Solution:
+    def uniquePaths(self, m: int, n: int) -> int:
+        # 动态转移方程： dp[i][j] = dp[i-1][j] + dp[i][j-1]
+        #到达当前位置[i, j]的路径数 = 从上边来的[i, j-1] + 从左边来的[i-1， j]
+        
+        #注意这里的初始值设定
+        dp = [[1]*n for _ in range(m)] # 初始化dp二维数组
+        
+        for i in range(1, m):
+            for j in range(1, n):
+                #dp[i][j] 为后一个状态，dp[i-1][j]+dp[i][j-1]都以前一个状态
+                dp[i][j] = dp[i-1][j]+dp[i][j-1] 
+                
+        return dp[m-1][n-1]
+
+``` 
+
+## 3. 不同路径 II
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+
+63\. 不同路径 II（middle） [力扣](https://leetcode-cn.com/problems/unique-paths-ii/description/)
+
+示例 1:
+
+<img src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/robot_maze.png">
+
+网格中的障碍物和空位置分别用 1 和 0 来表示。
+
+<img style="width: 242px; height: 242px;" src="https://assets.leetcode.com/uploads/2020/11/04/robot1.jpg" alt="">
+
+输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]
+输出：2
+
+解释：
+3x3 网格的正中间有一个障碍物。
+从左上角到右下角一共有 2 条不同的路径：
+1. 向右 -> 向右 -> 向下 -> 向下
+2. 向下 -> 向下 -> 向右 -> 向右
+
+```python
+class Solution:
+    def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
+        # 典型 dp 问题
+        rows = len(obstacleGrid)
+        if rows < 1:return 0
+
+        cols = len(obstacleGrid[0])
+        if cols < 1:return 0
+
+        if obstacleGrid[0][0] == 1:return 0
+        #dp = [[1 for _ in range(cols)] for _ in range(rows)]
+        dp = [[1]*cols for _ in range(rows)]
+
+        #  第一列， 第一行 初始化
+        for i in range(1, rows): # 必须从1开始
+            if obstacleGrid[i][0] == 1:
+                dp[i][0] = 0
+            else:
+                if dp[i-1][0] == 0: # 前面有障碍物
+                    dp[i][0] = 0
+
+        for j in range(1, cols): # 必须从1开始
+            if obstacleGrid[0][j] == 1:
+                dp[0][j] = 0
+            else:
+                if dp[0][j-1] == 0:
+                    dp[0][j] = 0
+
+        # 状态转移 dp[i][j] = dp[i-1][j] + dp[i][j-1] (前一位置转移而来)
+        for row in range(1, rows):
+            for col in range(1, cols):
+                if obstacleGrid[row][col] == 0:
+                    print(i, j, dp[i-1][j], dp[i][j-1])
+                    dp[row][col] = dp[row-1][col] + dp[row][col-1]
+                else:
+                    dp[row][col] = 0
+
+        return dp[rows-1][cols-1]
+
+``` 
+
+## 4. 三角形最小路径和
+给定一个三角形，找出自顶向下的最小路径和。每一步只能移动到下一行中相邻的结点上。
+
+相邻的结点 在这里指的是 下标 与 上一层结点下标 相同或者等于 上一层结点下标 + 1 的两个结点。
+
+120\. 三角形最小路径和（middle） [力扣](https://leetcode-cn.com/problems/triangle/description/)
+
+例如，给定三角形：
+```html
+
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+
+```
+
+自顶向下的最小路径和为 11（即，2 + 3 + 5 + 1 = 11）
+
+```python
+class Solution:
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        # 倒着看
+        # triangle[i, j] --> 当前元素的最短路径
+        # triangle[i][j]=min(triangle[i+1][j],triangle[i+1][j+1])+triangle[i][j]
+        if not triangle or len(triangle[0]) == 0: return 0
+        rows = len(triangle)
+
+        for row in range(rows-2,-1,-1):
+            for col in range(len(triangle[row]) - 1, -1, -1):#保持美感
+            #for col in range(len(triangle[row])): #也是OK的
+                triangle[row][col] += min(triangle[row+1][col], triangle[row+1][col+1])
+
+        return triangle[0][0]
+
+``` 
