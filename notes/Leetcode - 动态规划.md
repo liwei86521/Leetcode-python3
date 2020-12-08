@@ -8,6 +8,7 @@
         * [4. 打家劫舍](#4-打家劫舍)
         * [5. 打家劫舍 II](#5-打家劫舍-II)
     * [矩阵路径](#矩阵路径)
+        * [0. 杨辉三角](#0-杨辉三角)
         * [1. 最小路径和](#1-最小路径和)
         * [2. 不同路径](#2-不同路径)
         * [3. 不同路径 II](#2-不同路径-II)
@@ -263,6 +264,47 @@ class Solution:
  ```
 
 ## 矩阵路径
+## 0. 杨辉三角
+给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/PascalTriangleAnimated2.gif" alt="">
+
+在杨辉三角中，每个数是它左上方和右上方的数的和。
+
+118\. 杨辉三角（easy） [力扣](https://leetcode-cn.com/problems/pascals-triangle/description/)
+
+示例 1:
+
+```html
+
+输入: 5
+输出:
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+
+```
+
+```python
+class Solution:
+    def generate(self, numRows: int) -> List[List[int]]:
+        if numRows == 0:
+            return []
+
+        # dp dp[i][j]=dp[i−1][j−1]+dp[i−1][j] 状态转移方程
+        dp = [[1] * (i+1) for i in range(numRows)]
+        for row in range(2, numRows):
+            for j in range(1, row):
+                dp[row][j] = dp[row-1][j-1] + dp[row-1][j]
+
+        return dp
+
+``` 
+
 ## 1. 最小路径和
 给定一个包含非负整数的 m x n 网格 grid ，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。 说明：每次只能向下或者向右移动一步。
 
