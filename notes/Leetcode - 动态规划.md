@@ -821,7 +821,7 @@ class Solution:
 给定一个无序的整数数组，找到其中最长上升子序列的长度
 可能会有多种最长上升子序列的组合，你只需要输出对应的长度即可
 
-300\. 最长上升子序列（middle） [力扣]https://leetcode-cn.com/problems/longest-increasing-subsequence/description/)
+300\. 最长上升子序列（middle） [力扣](https://leetcode-cn.com/problems/longest-increasing-subsequence/description/)
 
 示例 1:
 
