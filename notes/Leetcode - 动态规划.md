@@ -23,6 +23,10 @@
         * [3. 最长连续递增序列](#3-最长连续递增序列)
         * [4. 乘积最大子数组](#4-乘积最大子数组)
         * [5. 最长上升子序列](#5-最长上升子序列)
+    * [股票交易](#股票交易)
+        * [1. 买卖股票的最佳时机](#1-买卖股票的最佳时机)
+        * [2. 买卖股票的最佳时机 II](#2-买卖股票的最佳时机-II)
+        * [3. 买卖股票的最佳时机含手续费](#3-买卖股票的最佳时机含手续费)
         
 <!-- GFM-TOC -->
 
@@ -863,3 +867,198 @@ class Solution:
 
 ``` 
 
+## 股票交易
+## 1. 买卖股票的最佳时机
+
+给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+
+如果你最多只允许完成一笔交易（即买入和卖出一支股票一次），设计一个算法来计算你所能获取的最大利润。
+
+121\. 买卖股票的最佳时机（easy） [力扣](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/description/)
+
+示例 1:
+
+```html
+输入: [7,1,5,3,6,4]
+输出: 5
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
+     注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
+
+
+输入: [7,6,4,3,1]
+输出: 0
+解释: 在这种情况下, 没有交易完成, 所以最大利润为 0。
+
+```
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        if not prices: return 0
+        # dp[i][0] 下标为 i 这天结束的时候，不持股，手上拥有的现金数
+        # dp[i][1] 下标为 i 这天结束的时候，持股，手上拥有的现金数
+
+        n = len(prices)
+        dp = [[None, None] for _ in range(n)] # 二维 DP
+
+        dp[0][0] = 0        # 第一天没有股票，说明没买没卖，获利为0
+        dp[0][1] = -prices[0]   # 第一天持有股票，说明买入了，花掉一笔钱
+
+        for i in range(1, n):
+            # 前一天持有 或者 今天买进持有
+            dp[i][1] = max(dp[i - 1][1], - prices[i])
+            # 前一天卖掉 或者 今天卖掉
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i])
+
+        return dp[n - 1][0]
+
+
+    """
+    def maxProfit(prices: List[int]) -> int:
+        if not prices:return 0
+        #hold[i] #代表 第i天持有可获得的最大收益
+        #sell[i] #代表 第i天卖掉可获得的最大收益
+        n = len(prices)
+        hold = [-float("inf")] * n
+        sell = [0] * n
+        hold[0], sell[0] = -prices[0], 0
+        for i in range(1, n):
+            # 前一天持有 或者 今天买进持有
+            hold[i] = max(hold[i-1], -prices[i])
+            # 前一天卖掉 或者 今天卖掉
+            sell[i] = max(sell[i-1], prices[i]+hold[i-1])
+
+        return sell[-1]
+    """
+
+``` 
+
+## 2. 买卖股票的最佳时机 II
+
+给定一个数组，它的第 i 个元素是一支给定股票第 i 天的价格。
+
+设计一个算法来计算你所能获取的最大利润。你可以尽可能地完成更多的交易（多次买卖一支股票）
+
+122\. 买卖股票的最佳时机 II（easy） [力扣](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/description/)
+
+示例 1:
+
+```html
+输入: [7,1,5,3,6,4]
+输出: 7
+解释: 在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6-3 = 3 。
+
+
+输入: [1,2,3,4,5]
+输出: 4
+解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。
+     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。
+     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+
+```
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        
+        # dp[i][0] 下标为 i 这天结束的时候，不持股，手上拥有的现金数
+        # dp[i][1] 下标为 i 这天结束的时候，持股，手上拥有的现金数
+    
+        n = len(prices)
+        if n<=1: return 0
+        dp = [[None, None] for _ in range(n)]
+    
+        dp[0][0] = 0        # 第一天没有股票，说明没买没卖，获利为0
+        dp[0][1] = -prices[0]   # 第一天持有股票，说明买入了，花掉一笔钱
+    
+        for i in range(1, n):
+            # 前一天卖掉 或者 今天卖掉
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i])
+    
+            # 前一天持有 或者 今天买进持有
+            #dp[i][1] = max(dp[i - 1][1],  - prices[i]) # 这是只能一次交易
+            dp[i][1] = max(dp[i - 1][1], dp[i-1][0] - prices[i]) # 允许多次交易
+    
+        return dp[-1][0]
+    
+    """
+    def maxProfit(self, prices: List[int]) -> int:
+        # 典型贪心算法, dp
+        if not prices: return 0
+        n = len(prices)
+        dp = [0] * n
+        for i in range(1, n):
+            dp[i] = dp[i-1] + max(0, prices[i]-prices[i-1])
+
+        return dp[-1]
+
+    """
+
+``` 
+
+## 3. 买卖股票的最佳时机含手续费
+
+给定一个整数数组 prices，其中第 i 个元素代表了第 i 天的股票价格 ；非负整数 fee 代表了交易股票的手续费用。
+
+你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。
+
+返回获得利润的最大值。
+
+注意：这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。
+
+122\. 买卖股票的最佳时机含手续费（middle） [力扣](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/)
+
+示例 1:
+
+```html
+输入: prices = [1, 3, 2, 8, 4, 9], fee = 2
+输出: 8
+解释: 能够达到的最大利润:  
+在此处买入 prices[0] = 1
+在此处卖出 prices[3] = 8
+在此处买入 prices[4] = 4
+在此处卖出 prices[5] = 9
+总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8.
+
+```
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        
+        # dp[i][0] 下标为 i 这天结束的时候，不持股，手上拥有的现金数
+        # dp[i][1] 下标为 i 这天结束的时候，持股，手上拥有的现金数
+    
+        n = len(prices)
+        if n<=1: return 0
+        dp = [[None, None] for _ in range(n)]
+    
+        dp[0][0] = 0        # 第一天没有股票，说明没买没卖，获利为0
+        dp[0][1] = -prices[0] - fee  # 第一天持有股票，说明买入了，并且规定在买入股票的时候，扣除手续费
+    
+        for i in range(1, n):
+            # 前一天卖掉 或者 今天卖掉 ---> cash
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i]) #
+    
+            # 前一天持有 或者 今天买进持有 ---> hold
+            dp[i][1] = max(dp[i - 1][1], dp[i-1][0] - prices[i] - fee) # 允许多次交易
+    
+        return dp[-1][0]
+    
+    """
+    def maxProfit(self, prices: List[int], fee: int) -> int:
+        #条件:你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了
+
+        cash, hold = 0, -prices[0] #初始值设定
+        #cash 表示在当前没有持有股票的状态的获取最大利润值
+        #hold 表示在当前持有股票的状态的获取最大利润值
+        for i in range(1, len(prices)):
+            tmp_cash = cash # 临时变量，tmp_cash 代表前一天的cash的最大值
+            cash = max(cash, hold + prices[i] - fee)
+            hold = max(hold, tmp_cash - prices[i]) #买入不要fee
+
+        return cash
+    """
+
+``` 
