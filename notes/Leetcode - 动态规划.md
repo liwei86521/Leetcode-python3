@@ -1210,6 +1210,7 @@ class Solution:
         if maxNum > target:
             return False
 
+        #dp[i][j]表示考虑下标[0, i]这个双闭区间里的所有整数，在它们当中是否能够选出一些数，使得这些数之和恰好为整数j
         #dp[i][j] = x 表示，对于前 i 个物品，当前背包的容量为 j 时，若 x 为 true，
         # 则说明可以恰好将背包装满，若 x 为 false，则说明不能恰好将背包装满
         dp = [[False] * (target + 1) for _ in range(n+1)]
