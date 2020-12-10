@@ -1085,7 +1085,7 @@ class Solution:
 ## 0-1背包问题
 0-1背包问题:有N件物品和一个容量为V的背包,第i件物品的体积是vi，价值是wi,求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量量且总价值最大。
 作为「0-1 背包问题」，它的特点是：「每个数只能用一次」。解决的基本思路是：物品一个一个选，容量也一点一点增加去考虑，这一点是「动态规划」的思想，特别重要。
-![avatar](Leetcode-python3/pics/bag_01.png)
+![avatar](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_01.png?raw=true)
 
 ```python
 def knapsack_01(weight, value, c):
