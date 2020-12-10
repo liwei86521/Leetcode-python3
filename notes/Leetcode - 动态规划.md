@@ -1141,6 +1141,92 @@ def knapsack_01_v2(weight, value, c):
 
     print(dp)
     return dp[-1][-1]
+
+def knapsack_01_v3(weight, value, c):
+    """
+    测试数据：
+    c = 8 书包能承受的重量， capacity
+    weight = [2, 3, 4, 5] 每个物品的重量，共 4个物品
+    value = [3, 4, 5, 6] 每个物品的价值
+    """
+    n = len(weight)
+    dp = [[0 for j in range(c + 1)] for i in range(n)]
+    # dp[i][j]: 当前背包容量 j, 前 i 个物品最佳组合可获得得最大价值
+
+    # 初始状态设置 weight[0] 代表第一个物体， 这里已经处理好了第一个物体了
+    for j in range(c + 1):  # 初始化第一行
+        if (weight[0] <= j):
+            dp[0][j] = value[0]
+
+    for i in range(1, n):
+        for j in range(1, c + 1):
+            if j < weight[i]:  # 装不下第i个物体
+                dp[i][j] = dp[i - 1][j]
+            else:
+                # 背包总容量够放当前物体，遍历前一个状态考虑是否置换
+                dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i])
+
+    #print(dp)
+    return dp[-1][-1]
+
+``` 
+
+## 1. 分割等和子集
+
+给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等
+ps: 每个元素只能使用一次
+
+122\. 分割等和子集（middle） [力扣](https://leetcode-cn.com/problems/partition-equal-subset-sum/description/)
+
+示例 1:
+
+```html
+输入: [1, 5, 11, 5]
+输出: true
+
+解释: 数组可以分割成 [1, 5, 5] 和 [11].
+
+输入: [1, 2, 3, 5]
+输出: false
+
+解释: 数组不能分割成两个元素和相等的子集.
+
+```
+
+```python
+class Solution:
+    def canPartition(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if n < 2:
+            return False
+
+        total = sum(nums)
+        maxNum = max(nums)
+
+        if total & 1: # 等效于 if total % 2 表示为奇数时
+            return False
+
+        target = total // 2
+        if maxNum > target:
+            return False
+
+        #dp[i][j] = x 表示，对于前 i 个物品，当前背包的容量为 j 时，若 x 为 true，
+        # 则说明可以恰好将背包装满，若 x 为 false，则说明不能恰好将背包装满
+        dp = [[False] * (target + 1) for _ in range(n+1)]
+
+        # 设置初始条件, 背包没有空间的时候，就相当于装满了
+        for i in range(n+1):
+            dp[i][0] = True
+
+        for i in range(1, n+1):
+            for j in range(1, target + 1):
+                if j < nums[i-1]: # 容量不够, 数组索引从0开始
+                    dp[i][j] = dp[i-1][j]
+                else:
+                    dp[i][j] = dp[i-1][j-nums[i-1]] or dp[i-1][j]
+        #print(dp)
+        return dp[n][target] # dp[-1][-1]
+
 ``` 
 
 
