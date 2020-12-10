@@ -1117,6 +1117,32 @@ def knapsack_01(weight, value, c):
     #print(dp)
     return dp[-1][-1]
 
+
+def knapsack_01_v2(weight, value, c):
+    """
+    测试数据：
+    c = 8 书包能承受的重量， capacity
+    weight = [2, 3, 4, 5] 每个物品的重量，共 4个物品
+    value = [3, 4, 5, 6] 每个物品的价值
+    """
+    n = len(weight)
+    dp = [[0 for j in range(c + 1)] for i in range(n + 1)]
+    # dp[i][j]: 当前背包容量 j, 前 i 个物品最佳组合可获得得最大价值
+
+    # 初始状态设置  dp(0,j)=V(i,0)=0  已经在dp创建的时候处理好了
+
+    for i in range(1, n + 1):
+        for j in range(1, c + 1):
+            if j < weight[i - 1]:  # 装不下第i个物体 数组的索引是从0开始的
+                dp[i][j] = dp[i - 1][j]
+            else:
+                # 背包总容量够放当前物体，遍历前一个状态考虑是否置换
+                dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i - 1]] + value[i - 1])
+
+    print(dp)
+    return dp[-1][-1]
 ``` 
+
+
 
 
