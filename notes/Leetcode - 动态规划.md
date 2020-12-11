@@ -1260,9 +1260,9 @@ class Solution:
 
 ```
 
-!(https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_03.png?raw=true)
+![image](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_03.png?raw=true)
 
-!(https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_04.png?raw=true)
+![image](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_04.png?raw=true)
 
 ```python
 class Solution:
