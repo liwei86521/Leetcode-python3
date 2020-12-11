@@ -29,6 +29,7 @@
         * [3. 买卖股票的最佳时机含手续费](#3-买卖股票的最佳时机含手续费)
     * [0-1背包问题](#0-1背包问题)
         * [1. 分割等和子集](#1-分割等和子集)
+        * [2. 零钱兑换](#2-零钱兑换)
         
 <!-- GFM-TOC -->
 
@@ -1230,6 +1231,80 @@ class Solution:
 
 ``` 
 
+## 2. 零钱兑换
 
+给定不同面额的硬币 coins 和一个总金额 amount。编写一个函数来计算可以凑成总金额所需的最少的硬币个数。如果没有任何一种硬币组合能组成总金额，返回 -1。
+
+你可以认为每种硬币的数量是无限的。
+
+322\. 零钱兑换（middle） [力扣](https://leetcode-cn.com/problems/coin-change/description/)
+
+示例 1:
+
+```html
+输入：coins = [1, 2, 5], amount = 11
+输出：3 
+解释：11 = 5 + 5 + 1
+
+输入：coins = [2], amount = 3
+输出：-1
+
+输入：coins = [1], amount = 0
+输出：0
+
+输入：coins = [1], amount = 1
+输出：1
+
+输入：coins = [1], amount = 2
+输出：2
+
+```
+
+![avatar3](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_03.png?raw=true)
+![avatar4](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_04.png?raw=true)
+
+```python
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        # 完全背包 问题
+        n = len(coins)
+        dp = [[float("inf")]*(amount+1) for _ in range(n+1)]
+        #dp[i][j] 表示考虑物品区间 [0, i] 里，可重复 容量为j 的最少硬币个数
+        for i in range(n+1):
+            dp[i][0] = 0
+
+        for i in range(1, n+1):
+            for j in range(1, amount+1):
+                if j >= coins[i-1]: #能装下， 注意下面的状态转移方程与01背包的区别
+                    dp[i][j] = min(dp[i-1][j], dp[i][j-coins[i-1]]+1)
+                else:
+                    dp[i][j] = dp[i-1][j]
+
+        #print(dp)
+        return dp[-1][-1] if dp[-1][-1] != float("inf") else -1
+
+
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+
+        #dp[i] = dp[i-1] + dp[i-2] + dp[i-5] #假设总是用1,2,5
+        #dp[i] 表示凑成总金额i所需的最少的硬币个数
+        dp = [float("inf")]*(amount+1)
+        dp[0] = 0 #初始值设置
+
+        for i in range(amount+1):
+            for coin in coins:
+                if (i>=coin): # 能够装下 coin
+                    #i>=coin时 选择拿coin硬币 这个时候 硬币数 = dp[i - coin] + 1
+                    dp[i] = min(dp[i], dp[i-coin]+1)
+
+                #else: # i < coin #选择 不拿  这个时候， 硬币数 = dp[i]
+                    #dp[i] = dp[i]
+
+        #print(dp)
+        # 时间复杂度：O(amonut * len(coins))
+        return dp[-1] if (dp[-1] != float("inf")) else -1
+
+```
 
 
