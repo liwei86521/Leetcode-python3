@@ -1261,6 +1261,7 @@ class Solution:
 ```
 
 ![avatar3](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_03.png?raw=true)
+
 ![avatar4](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_04.png?raw=true)
 
 ```python
