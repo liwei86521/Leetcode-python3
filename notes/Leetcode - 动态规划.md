@@ -34,6 +34,7 @@
         * [4. 单词拆分](#4-单词拆分)
     * [字符串问题](#字符串问题)
         * [1. 最长回文子串](#1-最长回文子串)
+        * [2. 回文子串](#1-回文子串)
 <!-- GFM-TOC -->
 
 ## 斐波那契数列
@@ -1657,4 +1658,62 @@ class Solution:
 
         return res
 
+``` 
+
+## 2. 回文子串
+
+给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。
+
+具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串。
+
+647\. 回文子串 [力扣](https://leetcode-cn.com/problems/palindromic-substrings/description/)
+
+示例 1:
+
+```html
+输入："abc"
+输出：3
+解释：三个回文子串: "a", "b", "c"
+
+输入："aaa"
+输出：6
+解释：6个回文子串: "a", "a", "a", "aa", "aa", "aaa"
+
+```
+
+```python
+class Solution:
+    def countSubstrings(self, s: str) -> int:
+        n = len(s)
+        if n <= 1: return n
+
+        # 状态 dp[i][j] 表示子串 s[i:j+1]是否为回文子串
+        # 状态转移方程 dp[i][j] = (s[i] == s[j]) and (dp[i+1][j-1])
+        # dp[i+1][j-1]边界条件前提是 j-1-(i+1)+1 < 2  --->   j - i < 3
+        dp = [[False]*n for _ in range(n)] # 二维dp
+
+        for i in range(n): # 初始化，单个字符也是回文
+            dp[i][i] = True
+
+        count = n #  单个字符都算回文, 下面回文的长度至少为2
+        for j in range(1, n):
+            for i in range(0, j):
+                # 状态转移方程：如果头尾字符相等并且中间也是回文
+                # 在头尾字符相等的前提下，如果收缩以后不构成区间（最多只有 1 个元素），直接返回 True
+                # 否则要继续看收缩以后的区间的回文性  重点理解 or 的短路性质在这里的作用
+                # #查看 dp[l+1,r-1] 收缩以后的区间的回文性 eg:s="bababd"
+                if s[i] == s[j] and (j-i <= 2 or dp[i+1][j-1]):
+                    dp[i][j] = True
+                    
+                # if s[i] == s[j]: # 下面7行是对上面2行的理解
+                #     if j-i <= 2:
+                #         dp[i][j] = True
+                #     else:
+                #         dp[i][j] = dp[i+1][j-1]
+                # else:
+                #     dp[i][j] = False
+                
+                    count += 1
+
+        return count
 ``` 
