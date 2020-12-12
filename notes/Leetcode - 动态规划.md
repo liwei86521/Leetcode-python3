@@ -1182,7 +1182,7 @@ def knapsack_01_v3(weight, value, c):
 
 因为 dp[j-w] 表示 dp[i-1][j-w]，因此不能先求 dp[i][j-w]，防止将 dp[i-1][j-w] 覆盖。也就是说要先计算 dp[i][j] 再计算 dp[i][j-w]，在程序实现时需要按倒序来循环求解。
 
-``` 
+```python
 def knapsack_01_space(weight, value, c):
     """
     测试数据：
@@ -1196,13 +1196,13 @@ def knapsack_01_space(weight, value, c):
     # 其中 dp[j] 既可以表示 dp[i-1][j] 也可以表示 dp[i][j]
     dp = [0] * (c +1)
 
-    for i in range(1, n+1):
-        for j in range(c, 0, -1): # 防止覆盖
-            if j < weight[i-1]:  # 装不下第i个物体 数组索引从0开始
+    for i in range(0, n):
+        for j in range(c, 0, -1): # 防止覆盖，因为每个物品只能用一次，以免之前的结果影响其他的结果
+            if j < weight[i]:  # 装不下第i个物体 数组索引从0开始
                 pass
             else:
                 # 背包总容量够放当前物体，遍历前一个状态考虑是否置换
-                dp[j] = max(dp[j], dp[j - weight[i-1]] + value[i-1])
+                dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
 
     print(dp) # [0, 0, 3, 4, 5, 7, 8, 9, 10]
     return dp[-1]
@@ -1264,8 +1264,42 @@ class Solution:
                     dp[i][j] = dp[i-1][j-nums[i-1]] or dp[i-1][j]
         #print(dp)
         return dp[n][target] # dp[-1][-1]
+        
+
+class Solution:
+    def canPartition(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if n < 2: return False
+
+        total = sum(nums)
+        maxNum = max(nums)
+
+        if total & 1: # 等效于 if total % 2 表示为奇数时
+            return False
+
+        target = total // 2
+        if maxNum > target:
+            return False
+
+        #dp[i][j] = dp[i-1][j-nums[i-1]] or dp[i-1][j]
+        #发现 dp[i][j] 都是通过上一行 dp[i-1][..] 转移过来的，我们进行状态压缩，将二维 dp 数组压缩为一维，节约空间复杂度
+        #ps:唯一需要注意的是 j 应该从 后往前反向遍历，因为每个物品（或者说数字）只能用一次，以免之前的结果影响其他的结果
+        dp = [False] * (target + 1)
+
+        # 设置初始条件, 背包没有空间的时候，就相当于装满了
+        dp[0] = True
+
+        for i in range(0, n):
+            for j in range(target, 0, -1): # j 应该从 后往前反向遍历，因为每个物品（或者说数字）只能用一次
+                if j >= nums[i]: # 容量够, 数组索引从0开始
+                    dp[j] = dp[j] or dp[j - nums[i]]
+
+        print(dp) # [True, True, False, False, False, True, True, False, False, False, True, True]
+        return dp[target]
 
 ``` 
+
+
 
 ## 2. 零钱兑换
 
