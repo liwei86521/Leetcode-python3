@@ -1357,24 +1357,28 @@ class Solution:
 
 class Solution:
     def coinChange(self, coins: List[int], amount: int) -> int:
+        # 完全背包 问题
+        n = len(coins)
 
-        #dp[i] = dp[i-1] + dp[i-2] + dp[i-5] #假设总是用1,2,5
-        #dp[i] 表示凑成总金额i所需的最少的硬币个数
-        dp = [float("inf")]*(amount+1)
-        dp[0] = 0 #初始值设置
+        # dp[i][j] = min(dp[i-1][j], dp[i][j-coins[i-1]]+1)
+        # 发现前面的 dp 数组的转移只和 dp[i][..] 和 dp[i-1][..]
+        dp = [float("inf")]*(amount+1) # 进行状态压缩
+        # 初始值
+        dp[0] = 0 
 
-        for i in range(amount+1):
-            for coin in coins:
-                if (i>=coin): # 能够装下 coin
-                    #i>=coin时 选择拿coin硬币 这个时候 硬币数 = dp[i - coin] + 1
-                    dp[i] = min(dp[i], dp[i-coin]+1)
+        for i in range(0, n):
+            for j in range(1, amount + 1):
+                if j >= coins[i]: #能装下，因为可以多次使用，所以不用倒序
+                    dp[j] = min(dp[j], dp[j-coins[i]]+1)
 
-                #else: # i < coin #选择 不拿  这个时候， 硬币数 = dp[i]
-                    #dp[i] = dp[i]
+        # for i in range(amount + 1): # 和上面是等效的
+        #     for coin in coins:
+        #         if (i >= coin):  # 能够装下 coin
+        #             # i>=coin时 选择拿coin硬币 这个时候 硬币数 = dp[i - coin] + 1
+        #             dp[i] = min(dp[i], dp[i - coin] + 1)
 
-        #print(dp)
-        # 时间复杂度：O(amonut * len(coins))
-        return dp[-1] if (dp[-1] != float("inf")) else -1
+        print(dp) # [0, 1, 1, 2, 2, 1, 2, 2, 3, 3, 2, 3] # 时间复杂度：O(amonut * len(coins))
+        return dp[-1] if dp[-1] != float("inf") else -1
 
 ```
 
