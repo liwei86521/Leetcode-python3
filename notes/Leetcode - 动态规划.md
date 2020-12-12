@@ -1172,6 +1172,42 @@ def knapsack_01_v3(weight, value, c):
 
 ``` 
 
+**空间优化**  
+
+在程序实现时可以对 0-1 背包做优化。观察状态转移方程可以知道，前 i 件物品的状态仅与前 i-1 件物品的状态有关，因此可以将 dp 定义为一维数组，其中 dp[j] 既可以表示 dp[i-1][j] 也可以表示 dp[i][j]。此时，
+
+<!--<div align="center"><img src="https://latex.codecogs.com/gif.latex?dp[j]=max(dp[j],dp[j-w]+v)" class="mathjax-pic"/></div> <br>-->
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/9ae89f16-7905-4a6f-88a2-874b4cac91f4.jpg" width="300px"> </div><br>
+
+因为 dp[j-w] 表示 dp[i-1][j-w]，因此不能先求 dp[i][j-w]，防止将 dp[i-1][j-w] 覆盖。也就是说要先计算 dp[i][j] 再计算 dp[i][j-w]，在程序实现时需要按倒序来循环求解。
+
+``` 
+def knapsack_01_space(weight, value, c):
+    """
+    测试数据：
+    c = 8 书包能承受的重量， capacity
+    weight = [2, 3, 4, 5] 每个物品的重量，共 4个物品
+    value = [3, 4, 5, 6] 每个物品的价值
+    """
+    n = len(weight)
+    #对dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - weight[i]] + value[i])  空间优化
+    # dp[j] = max(dp[j], dp[j - weight[i]] + value[i])
+    # 其中 dp[j] 既可以表示 dp[i-1][j] 也可以表示 dp[i][j]
+    dp = [0] * (c +1)
+
+    for i in range(1, n+1):
+        for j in range(c, 0, -1): # 防止覆盖
+            if j < weight[i-1]:  # 装不下第i个物体 数组索引从0开始
+                pass
+            else:
+                # 背包总容量够放当前物体，遍历前一个状态考虑是否置换
+                dp[j] = max(dp[j], dp[j - weight[i-1]] + value[i-1])
+
+    print(dp) # [0, 0, 3, 4, 5, 7, 8, 9, 10]
+    return dp[-1]
+``` 
+
 ## 1. 分割等和子集
 
 给定一个只包含正整数的非空数组。是否可以将这个数组分割成两个子集，使得两个子集的元素和相等
