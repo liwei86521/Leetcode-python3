@@ -1090,18 +1090,21 @@ class Solution:
     dp[i] += dp[i-num]
     
     377. 组合总和 Ⅳ  [组合总和 Ⅳ](https://leetcode-cn.com/problems/combination-sum-iv/description/)
+    
     518. 零钱兑换 II  [零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/description/)
 
 2.True、False问题公式
     dp[i] = dp[i] or dp[i-num]
     
     139. 单词拆分  [组合总和 Ⅳ](https://leetcode-cn.com/problems/word-break/description/)
+    
     416. 分割等和子集  [组合总和 Ⅳ](https://leetcode-cn.com/problems/partition-equal-subset-sum/description/)
 
 3.最大最小问题公式
     dp[i] = min(dp[i], dp[i-num]+1)或者dp[i] = max(dp[i], dp[i-num]+1)
     
     322. 零钱兑换  [零钱兑换](https://leetcode-cn.com/problems/coin-change/description/)
+    
     474. 一和零  [一和零](https://leetcode-cn.com/problems/ones-and-zeroes/description/)  
 
 当然拿到问题后，需要做到以下几个步骤：
