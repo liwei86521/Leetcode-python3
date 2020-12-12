@@ -32,7 +32,8 @@
         * [2. 零钱兑换](#2-零钱兑换)
         * [3. 零钱兑换 II](#3-零钱兑换-II)
         * [4. 单词拆分](#4-单词拆分)
-        
+    * [字符串问题](#字符串问题)
+        * [1. 最长回文子串](#1-最长回文子串)
 <!-- GFM-TOC -->
 
 ## 斐波那契数列
@@ -1590,5 +1591,70 @@ class Solution:
 
         print(dp)
         return dp[-1]
+
+``` 
+
+##字符串问题
+## 1. 最长回文子串
+
+给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
+
+5\. 最长回文子串（middle） [力扣](https://leetcode-cn.com/problems/longest-palindromic-substring/description/)
+
+示例 1:
+
+```html
+输入: "babad"
+输出: "bab"
+注意: "aba" 也是一个有效答案。
+
+输入: "cbbd"
+输出: "bb"
+
+输入: "babba"
+输出: "abba"
+
+```
+
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        if n <= 1: return s
+
+        # 状态 dp[i][j] 表示子串 s[i:j+1]是否为回文子串
+        # 状态转移方程 dp[i][j] = (s[i] == s[j]) and (dp[i+1][j-1])
+        # dp[i+1][j-1]边界条件前提是 j-1-(i+1)+1 < 2  --->   j - i < 3
+        dp = [[False]*n for _ in range(n)] # 二维dp
+
+        for i in range(n): # 初始化，单个字符也是回文
+            dp[i][i] = True
+
+        longest_l = 0  # 用于判断是否更新res
+        res = ""  # 作为返回值进行return
+
+        for j in range(1, n):
+            for i in range(0, j):
+                # 状态转移方程：如果头尾字符相等并且中间也是回文
+                # 在头尾字符相等的前提下，如果收缩以后不构成区间（最多只有 1 个元素），直接返回 True
+                # 否则要继续看收缩以后的区间的回文性  重点理解 or 的短路性质在这里的作用
+                # #查看 dp[l+1,r-1] 收缩以后的区间的回文性 eg:s="bababd"
+                if s[i] == s[j] and (j-i <= 2 or dp[i+1][j-1]):
+                    dp[i][j] = True
+                
+                # if s[i] == s[j]: # 下面7行是对上面2行的理解
+                #     if j-i <= 2:
+                #         dp[i][j] = True
+                #     else:
+                #         dp[i][j] = dp[i+1][j-1]
+                # else:
+                #     dp[i][j] = False
+                
+                    cur_len = j - i + 1
+                    if cur_len > longest_l:
+                        longest_l = cur_len
+                        res = s[i:j+1]
+
+        return res
 
 ``` 
