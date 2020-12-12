@@ -30,6 +30,7 @@
     * [0-1背包问题](#0-1背包问题)
         * [1. 分割等和子集](#1-分割等和子集)
         * [2. 零钱兑换](#2-零钱兑换)
+        * [3. 零钱兑换 II](#3-零钱兑换-II)
         
 <!-- GFM-TOC -->
 
@@ -1084,6 +1085,55 @@ class Solution:
 ``` 
 
 ## 0-1背包问题
+三种背包问题:
+1.组合问题公式
+    dp[i] += dp[i-num]
+    
+    377. 组合总和 Ⅳ  [组合总和 Ⅳ](https://leetcode-cn.com/problems/combination-sum-iv/description/)
+    518. 零钱兑换 II  [零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/description/)
+
+2.True、False问题公式
+    dp[i] = dp[i] or dp[i-num]
+    
+    139. 单词拆分  [组合总和 Ⅳ](https://leetcode-cn.com/problems/word-break/description/)
+    416. 分割等和子集  [组合总和 Ⅳ](https://leetcode-cn.com/problems/partition-equal-subset-sum/description/)
+
+3.最大最小问题公式
+    dp[i] = min(dp[i], dp[i-num]+1)或者dp[i] = max(dp[i], dp[i-num]+1)
+    
+    322. 零钱兑换  [零钱兑换](https://leetcode-cn.com/problems/coin-change/description/)
+    474. 一和零  [一和零](https://leetcode-cn.com/problems/ones-and-zeroes/description/)  
+
+当然拿到问题后，需要做到以下几个步骤：
+1.分析是否为背包问题。
+2.是以上三种背包问题中的哪一种。
+3.是0-1背包问题还是完全背包问题。即nums数组中的元素是否可以重复使用。
+4.如果是组合问题，是否需要考虑元素之间的顺序。需要考虑顺序有顺序的解法，不需要考虑顺序又有对应的解法。
+
+背包问题的判定：
+背包问题具备的特征：给定一个target，target可以是数字也可以是字符串，再给定一个数组nums，nums中装的可能是数字，
+也可能是字符串，问：能否使用nums中的元素做各种排列组合得到target
+
+背包问题技巧：
+1.如果是0-1背包，即数组中的元素不可重复使用，nums放在外循环，target在内循环，且内循环倒序；
+```python
+for num in nums:
+    for i in range(target, nums-1, -1):
+```
+
+2.如果是完全背包，即数组中的元素可重复使用，nums放在外循环，target在内循环。且内循环正序。
+```python
+for num in nums:
+    for i in range(nums, target+1):
+```
+
+3.如果组合问题需考虑元素之间的顺序，需将target放在外循环，将nums放在内循环。
+```python
+for i in range(1, target+1):
+    for num in nums:
+```
+
+
 0-1背包问题:有N件物品和一个容量为V的背包,第i件物品的体积是vi，价值是wi,求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量量且总价值最大。
 作为「0-1 背包问题」，它的特点是：「每个数只能用一次」。解决的基本思路是：物品一个一个选，容量也一点一点增加去考虑，这一点是「动态规划」的思想，特别重要。
 ![avatar](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/bag_01.png?raw=true)
@@ -1382,4 +1432,88 @@ class Solution:
 
 ```
 
+## 3. 零钱兑换 II
+
+给定不同面额的硬币和一个总金额。写出函数来计算可以凑成总金额的硬币组合数。假设每一种面额的硬币有无限个。 
+
+518\. 零钱兑换（middle） [力扣](https://leetcode-cn.com/problems/coin-change-2/description/)
+
+示例 1:
+
+```html
+输入: amount = 5, coins = [1, 2, 5]
+输出: 4
+解释: 有四种方式可以凑成总金额:
+5=5
+5=2+2+1
+5=2+1+1+1
+5=1+1+1+1+1
+
+输入: amount = 3, coins = [2]
+输出: 0
+解释: 只用面额2的硬币不能凑成总金额3。
+
+输入: amount = 10, coins = [10] 
+输出: 1
+
+输入: amount = 0, coins = [10] 
+输出: 1
+
+```
+
+```python
+class Solution:
+    def change(self, amount: int, coins: List[int]) -> int:
+        #完全背包问题
+        n = len(coins)
+        #dp[i][j], 硬币列表的前缀子区间 [0, i] 能够凑成总金额为 j 的组合数
+        dp = [[0]*(amount+1) for _ in range(n+1)]
+
+        #初始条件 dp[i][0] = 1  都不选即可满足条件
+        for i in range(n+1):
+            dp[i][0] = 1
+
+        for i in range(1, n+1):
+            for j in range(1, amount+1):
+                if j >= coins[i-1]: #能够装下第i个硬币
+                    dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]]
+                else:
+                    dp[i][j] = dp[i - 1][j]
+
+        #print(dp)
+        return dp[-1][-1]
+
+
+class Solution:
+    def change(self, amount: int, coins: List[int]) -> int:
+        #完全背包问题
+        n = len(coins)
+
+        # dp[i][j] = dp[i-1][j] + dp[i][j-coins[i-1]]
+        # 发现前面的 dp 数组的转移只和 dp[i][..] 和 dp[i-1][..]
+        dp = [0]*(amount+1)
+
+        #初始条件 dp[0] = 1  都不选即可满足条件
+        dp[0] = 1
+
+        for i in range(0, n): # 跟顺序不相关
+            for j in range(1, amount+1):
+                if j >= coins[i]: #能够装下第i个硬币
+                    dp[j] = dp[j] + dp[j-coins[i]]
+                # else:
+                #     dp[j] = [j]
+
+
+        # for j in range(1, amount+1): # 跟顺序相关
+        #     for i in range(0, n):
+        #         if j >= coins[i]: #能够装下第i个硬币
+        #             dp[j] = dp[j] + dp[j-coins[i]]
+        #         # else:
+        #         #     dp[j] = [j]
+
+        #amount = 5, coins = [1, 2, 5]
+        print(dp) # [1, 1, 2, 2, 3, 4]
+        return dp[-1]
+
+``` 
 
