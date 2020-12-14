@@ -9,11 +9,13 @@
         * [5. 二叉树的最小深度](#5-二叉树的最小深度)
         * [6. 二进制矩阵中的最短路径](#6-二进制矩阵中的最短路径)
     * [DFS](#dfs)
-        * [1. 查找最大的连通面积](#1-查找最大的连通面积)
-        * [2. 矩阵中的连通分量数目](#2-矩阵中的连通分量数目)
-        * [3. 好友关系的连通分量数目](#3-好友关系的连通分量数目)
-        * [4. 填充封闭区域](#4-填充封闭区域)
-        * [5. 能到达的太平洋和大西洋的区域](#5-能到达的太平洋和大西洋的区域)
+        * [1. 二叉树的最大深度](#1-二叉树的最大深度)
+        * [2. 二叉树的最小深度](#2-二叉树的最小深度)
+        * [3. 相同的树](#3-相同的树)
+        * [4. 平衡二叉树](#4-平衡二叉树)
+        * [5. 叶子相似的树](#5-叶子相似的树)
+        * [6. 路径总和](#6-路径总和)
+        * [7. 二叉树的所有路径](#7-二叉树的所有路径)
     * [Backtracking](#backtracking)
         * [1. 数字键盘组合](#1-数字键盘组合)
         * [2. IP 地址划分](#2-ip-地址划分)
@@ -422,3 +424,379 @@ class Solution:
 - 栈：用栈来保存当前节点信息，当遍历新节点返回时能够继续遍历当前节点。可以使用递归栈。
 - 标记：和 BFS 一样同样需要对已经遍历过的节点进行标记。
 
+
+## DFS
+
+## 1. 二叉树的最大深度
+
+给定一个二叉树，找出其最大深度。
+
+二叉树的深度为根节点到最远叶子节点的最长路径上的节点数。
+ 
+104\. 二叉树的最大深度（easy） [力扣](https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/description/)
+
+示例 1:
+
+```html
+给定二叉树 [3,9,20,null,null,15,7], 返回它的最大深度 3 
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def maxDepth(self, root: TreeNode) -> int:
+        # DFS 递归   分治法
+        if not root: return 0
+            
+        left_maxDepth = self.maxDepth(root.left)
+        right_maxDepth = self.maxDepth(root.right)
+        return max(left_maxDepth, right_maxDepth) + 1
+
+``` 
+
+
+class Solution:
+    def minDepth(self, root: TreeNode) -> int:
+        #  分治（递归的高级应用）
+        if not root: return 0
+
+        # root左子树为None，而右子树不为None，说明得在右子树中找叶子结点
+        if root.left is None and root.right is not None:
+            return self.minDepth(root.right) + 1
+
+        # root左子树不为None，而右子树为None，说明得在左子树中找叶子结点
+        if root.left is not None and root.right is None:
+            return self.minDepth(root.left) + 1
+
+        #divide and conquer
+        leftMinDepth = self.minDepth(root.left)
+        rightMinDepth = self.minDepth(root.right)
+
+        return results
+
+
+## 2. 二叉树的最小深度
+
+给定一个二叉树，找出其最小深度。
+
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量
+ 
+111\. 二叉树的最小深度（easy） [力扣](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/description/)
+
+示例 1:
+
+```html
+输入：root = [3,9,20,null,null,15,7]
+输出：2
+
+输入：root = [2,null,3,null,4,null,5,null,6]
+输出：5
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def minDepth(self, root: TreeNode) -> int:
+        #  分治（递归的高级应用）
+        if not root: return 0
+
+        # root左子树为None，而右子树不为None，说明得在右子树中找叶子结点
+        if root.left is None and root.right is not None:
+            return self.minDepth(root.right) + 1
+
+        # root左子树不为None，而右子树为None，说明得在左子树中找叶子结点
+        if root.left is not None and root.right is None:
+            return self.minDepth(root.left) + 1
+
+        #divide and conquer
+        leftMinDepth = self.minDepth(root.left)
+        rightMinDepth = self.minDepth(root.right)
+
+        return results
+
+``` 
+
+## 3. 相同的树
+
+给定两个二叉树，编写一个函数来检验它们是否相同。
+
+如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。
+ 
+100\. 相同的树（easy） [力扣](https://leetcode-cn.com/problems/same-tree/description/)
+
+示例 1:
+
+```html
+输入:       1         1
+          / \       / \
+         2   3     2   3
+
+        [1,2,3],   [1,2,3]
+
+输出: true
+
+输入:      1          1
+          /           \
+         2             2
+
+        [1,2],     [1,null,2]
+
+输出: false
+
+
+输入:       1         1
+          / \       / \
+         2   1     1   2
+
+        [1,2,1],   [1,1,2]
+
+输出: false
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def isSameTree(self, p: TreeNode, q: TreeNode) -> bool:
+        # 只要是树，DFS
+        if not p and not q: # 2树都为空
+            return True
+        elif p is not None and q is not None:#2树都不为空
+            if p.val == q.val:
+                return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
+            else:
+                return False
+        else:
+            return False
+
+``` 
+
+## 4. 平衡二叉树
+给定一个二叉树，判断它是否是高度平衡的二叉树。
+
+本题中，一棵高度平衡二叉树定义为：
+
+一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1 。
+ 
+110\. 平衡二叉树（easy） [力扣](https://leetcode-cn.com/problems/balanced-binary-tree/description/)
+
+示例 1:
+
+```html
+输入：root = [3,9,20,null,null,15,7]
+输出：true
+
+输入：root = [1,2,2,3,3,null,null,4,4]
+输出：false
+
+输入：root = []
+输出：true
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def isBalanced(self, root: TreeNode) -> bool:
+        # 遍历每一节点的左右子树的高度，判定其是否符合条件；
+        # 只要发现其不符合，立即退出，判定其不是平衡二叉树
+        if root is None:
+            return True
+        
+        # 分别定义左右子树的高度
+        left_depth = 0
+        right_depth = 0
+        if root.left:
+            left_depth = self.get_max_depth(root.left)
+        if root.right:
+            right_depth = self.get_max_depth(root.right)
+            
+        if abs(left_depth - right_depth) > 1:
+            return False
+        else:
+            return self.isBalanced(root.left) and self.isBalanced(root.right)
+
+    # 获取某一节点对应树的最大高度 
+    def get_max_depth(self, root):
+        if root is None:
+            return 0
+        else:
+            left_cnt = self.get_max_depth(root.left)
+            right_cnt= self.get_max_depth(root.right)
+            return max(left_cnt, right_cnt)+1
+
+``` 
+
+## 5. 叶子相似的树
+
+请考虑一棵二叉树上所有的叶子，这些叶子的值按从左到右的顺序排列形成一个 叶值序列 。
+
+如果有两棵二叉树的叶值序列是相同，那么我们就认为它们是 叶相似 的。
+
+如果给定的两个头结点分别为 root1 和 root2 的树是叶相似的，则返回 true；否则返回 false 
+ 
+872\. 叶子相似的树（easy） [力扣](https://leetcode-cn.com/problems/leaf-similar-trees/description/)
+
+示例 1:
+
+```html
+输入：root1 = [3,5,1,6,2,9,8,null,null,7,4], root2 = [3,5,1,6,7,4,2,null,null,null,null,null,null,9,8]
+输出：true
+
+输入：root1 = [1], root2 = [1]
+输出：true
+
+输入：root1 = [1,2], root2 = [2,2]
+输出：true
+
+输入：root1 = [1,2,3], root2 = [1,3,2]
+输出：false
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def leafSimilar(self, root1: TreeNode, root2: TreeNode) -> bool:
+        # 定义 添加叶子节点值的函数， DFS递归 好好理解一下
+        # def foo(root, res=[])  XXX
+        def dfs(root): # 不要用 可变变量进行初始化 XXX
+            if root is None:
+                return 
+
+            #左右子树都为空，该节点才是叶子节点
+            if (root.left is None) and (root.right is None):
+                temp.append(root.val)
+
+            dfs(root.left)
+            dfs(root.right)
+        
+        temp = [] # free 变量
+        dfs(root1)
+        temp1 = temp # 浅copy 
+
+        temp = [] # 提前置空防止
+        dfs(root2)
+        return temp1 == temp
+
+``` 
+
+## 6. 路径总和
+
+给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
+ 
+872\. 路径总和（easy） [力扣](https://leetcode-cn.com/problems/path-sum/description/)
+
+示例 1:
+
+```html
+给定如下二叉树，以及目标和 sum = 22，
+
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \      \
+        7    2      1
+
+返回 true, 因为存在目标和为 22 的根节点到叶子节点的路径 5->4->11->2
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def hasPathSum(self, root: TreeNode, sum: int) -> bool:
+        if not root:
+            return False
+        if not root.left and not root.right: # 叶子节点
+            return sum == root.val
+
+        return self.hasPathSum(root.left, sum - root.val) or self.hasPathSum(root.right, sum - root.val)
+
+``` 
+
+## 7. 二叉树的所有路径
+
+给定一个二叉树，返回所有从根节点到叶子节点的路径
+ 
+257\. 二叉树的所有路径（easy） [力扣](https://leetcode-cn.com/problems/binary-tree-paths/description/)
+
+示例 1:
+
+```html
+   1
+ /   \
+2     3
+ \
+  5
+
+输出: ["1->2->5", "1->3"]
+
+解释: 所有根节点到叶子节点的路径为: 1->2->5, 1->3
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def binaryTreePaths(self, root):
+
+        def dfs(root, path):
+            if root:
+                path += str(root.val)
+                if not root.left and not root.right:  # 当前节点是叶子节点
+                    paths.append(path)  # 把路径加入到答案中
+                else:
+                    path += '->'  # 当前节点不是叶子节点，继续递归遍历
+                    dfs(root.left, path)
+                    dfs(root.right, path)
+
+        paths = [] # free 变量（闭包）
+        dfs(root, '')
+        return paths
+
+``` 
