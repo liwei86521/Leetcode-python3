@@ -311,8 +311,6 @@ class Solution:
 
 示例 1:
 
-![image](https://assets.leetcode.com/uploads/2020/10/12/ex_depth.jpg?raw=true)
-
 ```html
 输入：root = [3,9,20,null,null,15,7]
 输出：2
@@ -371,9 +369,7 @@ class Solution:
 
 示例 1:
 
-<img style="height: 146px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_1.png" alt="">
-
-<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_2.png" alt="">
+![image](https://github.com/liwei86521/Leetcode-python3/blob/main/pics/example2_2.png?raw=true)
 
 <pre><strong>输入：</strong>[[0,1],[1,0]]
 <strong>输出：</strong>2
