@@ -7,6 +7,7 @@
         * [3. 员工的重要性](#3-员工的重要性)
         * [4. 二叉树的堂兄弟节点](#4-二叉树的堂兄弟节点)
         * [5. 二叉树的最小深度](#5-二叉树的最小深度)
+        * [6. 二进制矩阵中的最短路径](#6-二进制矩阵中的最短路径)
     * [DFS](#dfs)
         * [1. 查找最大的连通面积](#1-查找最大的连通面积)
         * [2. 矩阵中的连通分量数目](#2-矩阵中的连通分量数目)
@@ -349,5 +350,62 @@ class Solution:
                 if cur.right: temp.append(cur.right)
 
             queue=temp
+
+``` 
+
+## 6. 二进制矩阵中的最短路径
+
+在一个 N × N 的方形网格中，每个单元格有两种状态：空（0）或者阻塞（1）。
+
+一条从左上角到右下角、长度为 k 的畅通路径，由满足下述条件的单元格 C_1, C_2, ..., C_k 组成：
+<ul>
+	<li>相邻单元格&nbsp;<code>C_i</code> 和&nbsp;<code>C_{i+1}</code>&nbsp;在八个方向之一上连通（此时，<code>C_i</code> 和&nbsp;<code>C_{i+1}</code>&nbsp;不同且共享边或角）</li>
+	<li><code>C_1</code> 位于&nbsp;<code>(0, 0)</code>（即，值为&nbsp;<code>grid[0][0]</code>）</li>
+	<li><code>C_k</code>&nbsp;位于&nbsp;<code>(N-1, N-1)</code>（即，值为&nbsp;<code>grid[N-1][N-1]</code>）</li>
+	<li>如果 <code>C_i</code> 位于&nbsp;<code>(r, c)</code>，则 <code>grid[r][c]</code>&nbsp;为空（即，<code>grid[r][c] ==&nbsp;0</code>）</li>
+</ul>
+
+返回这条从左上角到右下角的最短畅通路径的长度。如果不存在这样的路径，返回 -1 。
+ 
+1091\. 二进制矩阵中的最短路径（middle） [力扣](https://leetcode-cn.com/problems/shortest-path-in-binary-matrix/description/)
+
+示例 1:
+
+<pre><strong>输入：</strong>[[0,1],[1,0]]
+<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example1_1.png" alt="">
+<strong>输出：</strong>2
+<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example1_2.png" alt="">
+</pre>
+
+<pre><strong>输入：</strong>[[0,0,0],[1,1,0],[1,1,0]]
+<img style="height: 146px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_1.png" alt="">
+<strong>输出：</strong>4
+<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_2.png" alt="">
+</pre>
+
+```python
+class Solution:
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        n = len(grid)
+        # 若起始点或终点堵塞，则不可能有这样的路径
+        if not grid or grid[0][0] == 1 or grid[n-1][n-1] == 1:
+            return -1
+        elif n <= 2:
+            return n
+
+        queue = [(0, 0, 1)] # 先压入起点，元组最后一位表示到达这里最短畅通路径的长度
+        grid[0][0] = 1 # mark as visited
+        while queue:
+            i, j, step = queue.pop(0)# 元组解包
+            for dx, dy in [(1,0), (1,1), (0,1), (-1,1), (-1,0), (-1,-1),(0,-1), (1,-1)]: #8个方向
+                if i+dx == n-1 and j+dy == n-1: #到达右下角
+                    return step + 1
+
+                # 处理边界及是否能够访问
+                if 0 <= i+dx < n and 0 <= j+dy < n and grid[i+dx][j+dy] == 0:
+                    queue.append((i+dx, j+dy, step+1))
+                    grid[i+dx][j+dy] = 1  # mark as visited
+
+        return -1
 
 ``` 
