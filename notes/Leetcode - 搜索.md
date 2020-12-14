@@ -371,20 +371,16 @@ class Solution:
 
 示例 1:
 
-<pre><strong>输入：</strong>[[0,1],[1,0]]
-<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example1_1.png" alt="">
-<strong>输出：</strong>2
-<img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example1_2.png" alt="">
-</pre>
-
-<pre><strong>输入：</strong>[[0,0,0],[1,1,0],[1,1,0]]
-
 <img style="height: 146px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_1.png" alt="">
-
-<strong>输出：</strong>4
 
 <img style="height: 151px; width: 150px;" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/06/16/example2_2.png" alt="">
 
+<pre><strong>输入：</strong>[[0,1],[1,0]]
+<strong>输出：</strong>2
+</pre>
+
+<pre><strong>输入：</strong>[[0,0,0],[1,1,0],[1,1,0]]
+<strong>输出：</strong>4
 </pre>
 
 ```python
