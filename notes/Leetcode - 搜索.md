@@ -6,6 +6,7 @@
         * [2. 二叉树的层次遍历 II](#2-二叉树的层次遍历-II)
         * [3. 员工的重要性](#3-员工的重要性)
         * [4. 二叉树的堂兄弟节点](#4-二叉树的堂兄弟节点)
+        * [5. 二叉树的最小深度](#5-二叉树的最小深度)
     * [DFS](#dfs)
         * [1. 查找最大的连通面积](#1-查找最大的连通面积)
         * [2. 矩阵中的连通分量数目](#2-矩阵中的连通分量数目)
@@ -294,5 +295,59 @@ class Solution:
             queue = temp # 进行下一次循环
             
         return False # ps 这里是防止 x = 4, y = 3的值都不在二叉树中的情况
+
+``` 
+
+## 5. 二叉树的最小深度
+
+给定一个二叉树，找出其最小深度。
+
+最小深度是从根节点到最近叶子节点的最短路径上的节点数量。
+
+说明：叶子节点是指没有子节点的节点。
+ 
+993\. 二叉树的最小深度（easy） [力扣](https://leetcode-cn.com/problems/minimum-depth-of-binary-tree/description/)
+
+示例 1:
+
+<img style="width: 432px; height: 302px;" src="https://assets.leetcode.com/uploads/2020/10/12/ex_depth.jpg" alt="">
+
+```html
+输入：root = [3,9,20,null,null,15,7]
+输出：2
+示例 2：
+
+输入：root = [2,null,3,null,4,null,5,null,6]
+输出：5
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def minDepth(self, root: TreeNode) -> int:
+        #广度优先BFS（人类思维）: 层次遍历(列队实现) 这个好理解一点
+        if not root:# 根节点判空返 0
+            return 0
+                
+        queue=[root] # 把根节点看成第0层
+        ans=0
+        while queue:
+            ans += 1
+            temp=[]#记录下一层的节点
+            for cur in queue:
+                #只要当前层有叶子节点则返回
+                if cur.left is None and cur.right is None:
+                    return ans
+
+                if cur.left: temp.append(cur.left)
+                if cur.right: temp.append(cur.right)
+
+            queue=temp
 
 ``` 
