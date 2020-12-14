@@ -311,7 +311,7 @@ class Solution:
 
 示例 1:
 
-![](https://assets.leetcode.com/uploads/2020/10/12/ex_depth.jpg?raw=true)
+![image](https://assets.leetcode.com/uploads/2020/10/12/ex_depth.jpg?raw=true)
 
 ```html
 输入：root = [3,9,20,null,null,15,7]
