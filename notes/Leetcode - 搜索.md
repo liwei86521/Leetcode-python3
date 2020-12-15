@@ -466,27 +466,6 @@ class Solution:
 
 ``` 
 
-
-class Solution:
-    def minDepth(self, root: TreeNode) -> int:
-        #  分治（递归的高级应用）
-        if not root: return 0
-
-        # root左子树为None，而右子树不为None，说明得在右子树中找叶子结点
-        if root.left is None and root.right is not None:
-            return self.minDepth(root.right) + 1
-
-        # root左子树不为None，而右子树为None，说明得在左子树中找叶子结点
-        if root.left is not None and root.right is None:
-            return self.minDepth(root.left) + 1
-
-        #divide and conquer
-        leftMinDepth = self.minDepth(root.left)
-        rightMinDepth = self.minDepth(root.right)
-
-        return results
-
-
 ## 2. 二叉树的最小深度
 
 给定一个二叉树，找出其最小深度。
