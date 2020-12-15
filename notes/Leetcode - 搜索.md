@@ -20,7 +20,8 @@
         * [9. 岛屿数量](#9-岛屿数量) 
     * [Backtracking](#backtracking)
         * [1. 电话号码的字母组合](#1-电话号码的字母组合)
-        * [2. IP 地址划分](#2-ip-地址划分)
+        * [2. 括号生成](#2-括号生成)
+        * [3. 组合总和](#3-组合总和)
         * [3. 在矩阵中寻找字符串](#3-在矩阵中寻找字符串)
         * [4. 输出二叉树中所有从根到叶子的路径](#4-输出二叉树中所有从根到叶子的路径)
         * [5. 排列](#5-排列)
@@ -912,6 +913,8 @@ Backtracking（回溯）属于 DFS。
 - 在访问一个新元素进入新的递归调用时，需要将新元素标记为已经访问，这样才能在继续递归调用时不用重复访问该元素；
 - 但是在递归返回时，需要将元素标记为未访问，因为只需要保证在一个递归链中不同时访问一个元素，可以访问已经访问过但是不在当前递归链中的元素。
 
+[详解可变 不可变数据类型 引用 深浅拷贝](https://leetcode-cn.com/problems/recover-a-tree-from-preorder-traversal/solution/yu-dao-jiu-shen-jiu-xiang-jie-ke-bian-bu-ke-bian-s/)
+
 ```html
 回溯法写法思路：
     1. 定义全局结果数组
@@ -1043,5 +1046,136 @@ class Solution:
             res = []
             backtrack('', digits)
             return res
+
+``` 
+
+## 2. 括号生成
+
+数字 n 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且 有效的 括号组合。
+
+22\. 括号生成（middle） [力扣](https://leetcode-cn.com/problems/generate-parentheses/description/)
+
+示例 1:
+
+```html
+输入：n = 3
+输出：[
+       "((()))",
+       "(()())",
+       "(())()",
+       "()(())",
+       "()()()"
+     ]
+
+```
+
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        '''
+        Backtracking都是这样的思路：在当前局面下，你有若干种选择。那么尝试每一种选择。如果已经发现某种
+        选择肯定不行（因为违反了某些限定条件），就返回；如果某种选择试到最后发现是正确解，就将其加入解集
+        所以思考回溯题时，只要明确三点就行：选择 (Options)，限制 (Restraints)，结束条件 (Termination)
+        '''
+
+        # step4:定义递归函数(1:参数 2:终止条件 3:剪枝条件 4:调用递归逐步产生结果
+        def backTrack(left, right, n, result):
+            if left == n and right == n:
+                res.append(result)
+                return
+
+            if left < n:
+                backTrack(left+1, right, n, result+"(") # 会开辟新的内存，所以不用撤销选择
+
+            if left > right and right < n:
+                backTrack(left, right+1, n, result+")")
+
+        res = [] # step1: 定义全局结果数组
+        backTrack(0, 0, n, "") #step2: 调用递归函数
+
+        return res #step3: 返回全局结果数组
+
+
+    def generateParenthesis_v2(self, n: int) -> List[str]:
+        # 推荐
+        def backtrack(S, left, right, n):
+            if left == n and right == n:
+                ans.append(''.join(S))
+                return
+
+            if left < n:
+                S.append('(') # 节省内存空间
+                backtrack(S, left+1, right, n)
+                S.pop()
+
+            if right < left:
+                S.append(')')
+                backtrack(S, left, right+1, n)
+                S.pop()
+
+        ans = []
+        backtrack([], 0, 0, n)
+
+        return ans
+
+``` 
+
+## 3. 组合总和
+
+给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的数字可以无限制重复被选取,ps 所有数字（包括 target）都是正整数 解集不能包含重复的组合
+
+39\. 组合总和（middle） [力扣](https://leetcode-cn.com/problems/combination-sum/description/)
+
+示例 1:
+
+```html
+输入：candidates = [2,3,6,7], target = 7,
+所求解集为：
+[
+  [7],
+  [2,2,3]
+]
+
+
+输入：candidates = [2,3,5], target = 8,
+所求解集为：
+[
+  [2,2,2,2],
+  [2,3,3],
+  [3,5]
+]
+```
+
+```python
+class Solution:
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+
+        def backtrack(candidates, total, path, level):
+            # 1 recursion terminator
+            if total == 0:
+                res.append(path[:])
+                return
+
+            for i in range(level, len(candidates)):
+                if total > 0:
+                    # 2 process data
+                    path.append(candidates[i])
+    
+                    # 3 drill down
+                    backtrack(candidates, total-candidates[i], path, i) # 这里i 是关键
+                    
+                    # reverse the current level status
+                    path.pop() # path是一个变量 内存地址一直都不会变，所以需要 撤销
+
+                else: # 剪枝
+                    break # 跳出循环
+
+        res = []
+        candidates.sort() #用来剪枝，配合break
+        backtrack(candidates, target, [], 0)
+
+        return res
 
 ``` 
