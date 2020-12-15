@@ -22,7 +22,9 @@
         * [1. 电话号码的字母组合](#1-电话号码的字母组合)
         * [2. 括号生成](#2-括号生成)
         * [3. 组合总和](#3-组合总和)
-        * [3. 在矩阵中寻找字符串](#3-在矩阵中寻找字符串)
+        * [4. 组合总和 II](#4-组合总和-II)
+        * [5. 路径总和 II](#5-路径总和-II)
+        * [6. 路径总和 III](#6-路径总和-III)
         * [4. 输出二叉树中所有从根到叶子的路径](#4-输出二叉树中所有从根到叶子的路径)
         * [5. 排列](#5-排列)
 <!-- GFM-TOC -->
@@ -1177,5 +1179,193 @@ class Solution:
         backtrack(candidates, target, [], 0)
 
         return res
+
+``` 
+
+## 4. 组合总和 II
+
+给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+
+candidates 中的每个数字在每个组合中只能使用一次
+
+###说明
+<ul>
+	<li>所有数字（包括目标数）都是正整数。</li>
+	<li>解集不能包含重复的组合。&nbsp;</li>
+</ul>
+
+candidates 中的数字可以无限制重复被选取,ps 所有数字（包括 target）都是正整数 解集不能包含重复的组合
+
+39\. 组合总和 II（middle） [力扣](https://leetcode-cn.com/problems/combination-sum-ii/description/)
+
+示例 1:
+
+```html
+输入: candidates = [10,1,2,7,6,1,5], target = 8,
+所求解集为:
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+
+输入: candidates = [2,5,2,1,2], target = 5,
+所求解集为:
+[
+  [1,2,2],
+  [5]
+]
+```
+
+```python
+class Solution:
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+
+        def backtrack(candidates, target, level, path, used):
+            if target == 0:
+                res.append(path[:])
+
+            for i in range(level, len(candidates)):
+                if target > 0: # 剪枝
+                    # 剪枝条件去掉 [1, 2, 5], [1, 2, 5] 其中 第二个[1, 2, 5] 中的1为list中的第二1
+                    if i > 0 and candidates[i] == candidates[i-1] and used[i-1]==False:
+                        continue
+
+                    path.append(candidates[i])
+                    used[i] = True
+
+                    # candidates 中的每个数字在每个组合中只能使用一次 故 用i加1
+                    backtrack(candidates, target - candidates[i], i+1, path, used)
+
+                    path.pop() # 这里3个都要撤销选择 是由于公用内存地址
+                    used[i] = False
+
+        candidates.sort() #用来剪枝
+        used = [False] * len(candidates)
+        res = []
+
+        backtrack(candidates, target, 0, [], used)
+
+        return res
+
+```
+
+## 5. 路径总和 II
+
+给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。
+
+说明: 叶子节点是指没有子节点的节点。
+
+113\. 路径总和 II（middle） [力扣](https://leetcode-cn.com/problems/path-sum-ii/description/)
+
+示例 1:
+
+```html
+给定如下二叉树，以及目标和 sum = 22，
+              5
+             / \
+            4   8
+           /   / \
+          11  13  4
+         /  \    / \
+        7    2  5   1
+
+返回:
+
+[
+   [5,4,11,2],
+   [5,8,4,5]
+]
+
+```
+
+```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+class Solution:
+    def pathSum(self, root: TreeNode, sum: int) -> List[List[int]]:
+        def backtrack(root, total, path):
+            if not root: return 
+            # recursion terminator condition 根节点到叶子节点的路径
+            if root.left is None and root.right is None:
+                if total - root.val== 0:
+                    res.append(path[:]+[root.val])
+                    return 
+                    
+            path.append(root.val) # 选择
+            
+            backtrack(root.left, total-root.val, path)
+            backtrack(root.right, total-root.val, path)
+            
+            path.pop() # 撤销 (因为path同一个变量 指向同一内存空间)
+        
+        if not root: return [] # bad case
+
+        res = []
+        backtrack(root, sum, [])
+        return res
+
+``` 
+
+## 6. 路径总和 III
+
+给定一个二叉树，它的每个结点都存放着一个整数值。
+
+找出路径和等于给定数值的路径总数。
+
+路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
+
+二叉树不超过1000个节点，且节点数值范围是 [-1000000,1000000] 的整数
+
+437\. 路径总和 III（middle） [力扣](https://leetcode-cn.com/problems/path-sum-iii/description/)
+
+示例 1:
+
+```html
+root = [10,5,-3,3,2,null,11,3,-2,null,1], sum = 8
+
+      10
+     /  \
+    5   -3
+   / \    \
+  3   2   11
+ / \   \
+3  -2   1
+
+返回 3。和等于 8 的路径有:
+
+1.  5 -> 3
+2.  5 -> 2 -> 1
+3.  -3 -> 11
+
+```
+
+```python
+class Solution:
+    def __init__(self): #初始化出一个 类属性用来计数
+        self.path_num=0
+
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        if not root: return self.path_num
+
+        self.dfs(root, sum)
+
+        self.pathSum(root.left, sum) # 因为 路径不需要从根节点开始 
+        self.pathSum(root.right, sum)
+
+        return self.path_num
+    
+    def dfs(self, root, total):
+        if not root: return 
+        if total - root.val == 0: # 也不需要在叶子节点结束
+            self.path_num +=1
+
+        self.dfs(root.left, total - root.val) 
+        self.dfs(root.right, total - root.val)
 
 ``` 
