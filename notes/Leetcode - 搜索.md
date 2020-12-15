@@ -19,7 +19,7 @@
         * [8. 岛屿的最大面积](#8-岛屿的最大面积) 
         * [9. 岛屿数量](#9-岛屿数量) 
     * [Backtracking](#backtracking)
-        * [1. 数字键盘组合](#1-数字键盘组合)
+        * [1. 电话号码的字母组合](#1-电话号码的字母组合)
         * [2. IP 地址划分](#2-ip-地址划分)
         * [3. 在矩阵中寻找字符串](#3-在矩阵中寻找字符串)
         * [4. 输出二叉树中所有从根到叶子的路径](#4-输出二叉树中所有从根到叶子的路径)
@@ -911,3 +911,137 @@ Backtracking（回溯）属于 DFS。
 
 - 在访问一个新元素进入新的递归调用时，需要将新元素标记为已经访问，这样才能在继续递归调用时不用重复访问该元素；
 - 但是在递归返回时，需要将元素标记为未访问，因为只需要保证在一个递归链中不同时访问一个元素，可以访问已经访问过但是不在当前递归链中的元素。
+
+```html
+回溯法写法思路：
+    1. 定义全局结果数组
+    2. 调用递归函数
+    3. 返回全局结果数组
+    4. 定义递归函数
+      1) 参数，动态变化，一般为分支结果、限制条件等
+      2) 终止条件，将分支结果添加到全局数组
+      3) 剪枝条件
+      4) 调用递归逐步产生结果，回溯搜索下一结果
+
+total = 0 # 1716039872
+print(id(total))
+total -= 2 # 1716039808
+print(id(total))
+
+p = [] # 可变类型
+print(id(p)) # 2305522011464
+p.append(3) # 如果是 p= p + [3]  则会开辟新的内存空间, 就达不到节约内存的目的
+print(id(p)) # 2305522011464
+
+#结论是 如果使用可变类型变量(eg: [], {})就必须选择和撤销，好处就是可以节省空间
+#      如果使用不可变类型变量(eg: int, str)就不需要 选择和撤销， 因为操作的不是同一块内存空间
+```
+
+## 1. 电话号码的字母组合
+
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母
+
+<div align="center"> <img src="https://cs-notes-1256109796.cos.ap-guangzhou.myqcloud.com/9823768c-212b-4b1a-b69a-b3f59e07b977.jpg"/> </div><br>
+
+17\. Letter Combinations of a Phone Number (Medium)  [力扣](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/description/)
+
+```html
+输入："23"
+输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]
+```
+
+```python
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        phone = {
+            '2': list('abc'),
+            '3': list('def'),
+            '4': list('ghi'),
+            '5': list('jkl'),
+            '6': list('mno'),
+            '7': list('pqrs'),
+            '8': list('tuv'),
+            '9': list('wxyz'),
+        }
+
+        res = []  # step1: 定义全局结果数组
+
+        # ps: backtrack(digits, path=[])  错误的 --> 不要使用可变类型作为参数的默认值
+        # step4: 定义递归函数(1:参数定义，2：终止条件，3：剪枝条件，4：调用递归逐步产生结果，回溯搜索下一结果
+        def backtrack(path, digits): # 回溯
+            if len(digits) == 0:
+                res.append("".join(path[:]))  # path[:] == path.copy()
+                return
+
+            for c in phone[digits[0]]:  # 选择列表
+                path.append(c)  # 选择
+                backtrack(path, digits[1:])
+                # path是一个可变类型变量 内存地址一直都不会变，所以需要 撤销
+                path.pop()  # 撤销选择
+
+        # step2: 调用递归函数
+        if digits:  # 放在digits为空
+            backtrack([], digits)
+
+        return res  # step3:返回全局结果数组
+
+    def letterCombinations_v1(self, digits: str) -> List[str]:
+        phone = {
+            '2': list('abc'),
+            '3': list('def'),
+            '4': list('ghi'),
+            '5': list('jkl'),
+            '6': list('mno'),
+            '7': list('pqrs'),
+            '8': list('tuv'),
+            '9': list('wxyz'),
+        }
+
+        res = []  # step1: 定义全局结果数组
+
+        # step4: 定义递归函数(1:参数定义，2：终止条件，3：剪枝条件，4：调用递归逐步产生结果，回溯搜索下一结果
+        def backtrack(path, digits):
+            if len(digits) == 0:
+                res.append("".join(path[:]))  # path[:] == path.copy()
+                return
+
+            for c in phone[digits[0]]:  # 选择列表
+                # path.append(c) #选择
+                # backtrack(path, digits[1:]) # path+[c] 会产生新的内存空间 所以不用撤销和选择
+                backtrack(path + [c], digits[1:])  # 这样比较浪费空间,最后不要这样写
+                # path.pop() # 撤销选择
+
+        # step2: 调用递归函数
+        if digits:  # 放在digits为空
+            backtrack([], digits)
+
+        return res  # step3:返回全局结果数组
+
+    def letterCombinations_v2(self, digits: str) -> List[str]:
+            if not digits: return []
+
+            phone = {'2': ['a', 'b', 'c'],
+                     '3': ['d', 'e', 'f'],
+                     '4': ['g', 'h', 'i'],
+                     '5': ['j', 'k', 'l'],
+                     '6': ['m', 'n', 'o'],
+                     '7': ['p', 'q', 'r', 's'],
+                     '8': ['t', 'u', 'v'],
+                     '9': ['w', 'x', 'y', 'z']}
+
+            def backtrack(path_str, nextdigit):
+                if len(nextdigit) == 0:
+                    res.append(path_str)
+                else:
+                    for letter in phone[nextdigit[0]]:
+                        # ps: path_str + letter 会开辟一个新的 内存空间， 所以不用选择和撤销
+                        # 坏处就是 浪费内存空间
+                        backtrack(path_str + letter, nextdigit[1:])
+
+            res = []
+            backtrack('', digits)
+            return res
+
+``` 
