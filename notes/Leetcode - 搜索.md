@@ -508,6 +508,8 @@ class Solution:
         #divide and conquer
         leftMinDepth = self.minDepth(root.left)
         rightMinDepth = self.minDepth(root.right)
+	
+	results = 1 + min(leftMinDepth, rightMinDepth)
 
         return results
 
