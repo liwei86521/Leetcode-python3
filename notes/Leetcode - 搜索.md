@@ -16,6 +16,8 @@
         * [5. 叶子相似的树](#5-叶子相似的树)
         * [6. 路径总和](#6-路径总和)
         * [7. 二叉树的所有路径](#7-二叉树的所有路径)
+        * [8. 岛屿的最大面积](#8-岛屿的最大面积) 
+        * [9. 岛屿数量](#9-岛屿数量) 
     * [Backtracking](#backtracking)
         * [1. 数字键盘组合](#1-数字键盘组合)
         * [2. IP 地址划分](#2-ip-地址划分)
@@ -781,3 +783,131 @@ class Solution:
         return paths
 
 ``` 
+
+## 8. 岛屿的最大面积
+
+给定一个包含了一些 0 和 1 的非空二维数组 grid 。
+
+一个 岛屿 是由一些相邻的 1 (代表土地) 构成的组合，这里的「相邻」要求两个 1 必须在水平或者竖直方向上相邻。你可以假设 grid 的四个边缘都被 0（代表水）包围着。
+
+找到给定的二维数组中最大的岛屿面积。(如果没有岛屿，则返回面积为 0 )
+ 
+695\. 岛屿的最大面积 [力扣](https://leetcode-cn.com/problems/max-area-of-island/description/)
+
+示例 1:
+
+```html
+[[0,0,1,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,1,1,0,1,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,1,0,0,1,0,1,0,0],
+ [0,1,0,0,1,1,0,0,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+
+对于上面这个给定矩阵应返回 6。注意答案不应该是 11 ，因为岛屿只能包含水平或垂直的四个方向的 1
+
+[[0,0,0,0,0,0,0,0]]
+
+对于上面这个给定的矩阵, 返回 0
+
+```
+
+```python
+class Solution:
+    def dfs(self, grid, cur_i, cur_j):
+        if cur_i < 0 or cur_j < 0 or cur_i == len(grid) or cur_j == len(grid[0]) 
+                             or grid[cur_i][cur_j] != 1:
+
+            return 0
+
+        grid[cur_i][cur_j] = 0 # 防止重复计算面积
+        ans = 1 # 岛屿初始值设为1
+        for di, dj in [[0, 1], [0, -1], [1, 0], [-1, 0]]: # 返回4个方向的和
+            next_i, next_j = cur_i + di, cur_j + dj
+            ans += self.dfs(grid, next_i, next_j)
+        return ans
+
+    # 找出某一岛屿面积思路: 1.从某位置出发，向4个方向探寻相连的土地
+    # 2. 每探寻到一块土地，计数加一  3.确保每块土地只被探寻一次
+    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
+        ans = 0
+        for i, l in enumerate(grid):
+            for j, n in enumerate(l):
+                ans = max(self.dfs(grid, i, j), ans)
+        return ans
+
+``` 
+
+## 9. 岛屿数量
+
+给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+
+岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。
+
+此外，你可以假设该网格的四条边均被水包围。
+
+ 
+200\. 岛屿数量（middle） [力扣](https://leetcode-cn.com/problems/number-of-islands/description/)
+
+示例 1:
+
+```html
+输入：grid = [
+  ["1","1","1","1","0"],
+  ["1","1","0","1","0"],
+  ["1","1","0","0","0"],
+  ["0","0","0","0","0"]
+]
+输出：1
+
+输入：grid = [
+  ["1","1","0","0","0"],
+  ["1","1","0","0","0"],
+  ["0","0","1","0","0"],
+  ["0","0","0","1","1"]
+]
+输出：3
+
+```
+
+```python
+class Solution:
+    def dfs(self, grid, r, c):
+        grid[r][c] = "0" # 将当期格的值设为0，表示已经遍历过
+        nr, nc = len(grid), len(grid[0]) # 数组行和列
+        # 从上下左右4个方向进行dfs
+        for x, y in [(r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)]:
+            if 0 <= x < nr and 0 <= y < nc and grid[x][y] == "1":
+                self.dfs(grid, x, y)
+
+    def numIslands(self, grid: List[List[str]]) -> int:
+        nr = len(grid)
+        if nr == 0:
+            return 0
+        nc = len(grid[0])
+
+        num_islands = 0
+        for r in range(nr):
+            for c in range(nc):
+                if grid[r][c] == "1":
+                    num_islands += 1
+                    self.dfs(grid, r, c)
+        
+        return num_islands
+
+``` 
+
+
+## Backtracking
+
+Backtracking（回溯）属于 DFS。
+
+- 普通 DFS 主要用在   **可达性问题**  ，这种问题只需要执行到特点的位置然后返回即可。
+- 而 Backtracking 主要用于求解   **排列组合**   问题，例如有 { 'a','b','c' } 三个字符，求解所有由这三个字符排列得到的字符串，这种问题在执行到特定的位置返回之后还会继续执行求解过程。
+
+因为 Backtracking 不是立即返回，而要继续求解，因此在程序实现时，需要注意对元素的标记问题：
+
+- 在访问一个新元素进入新的递归调用时，需要将新元素标记为已经访问，这样才能在继续递归调用时不用重复访问该元素；
+- 但是在递归返回时，需要将元素标记为未访问，因为只需要保证在一个递归链中不同时访问一个元素，可以访问已经访问过但是不在当前递归链中的元素。
