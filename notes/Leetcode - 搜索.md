@@ -26,8 +26,13 @@
         * [5. 组合总和 III](#5-组合总和-III)
         * [6. 路径总和 II](#6-路径总和-II)
         * [7. 路径总和 III](#7-路径总和-III)
-        * [4. 输出二叉树中所有从根到叶子的路径](#4-输出二叉树中所有从根到叶子的路径)
-        * [5. 排列](#5-排列)
+        * [8. 全排列](#8-全排列)
+        * [9. 全排列 II](#9-全排列-II)
+        * [10. 子集](#10-子集)
+        * [11. 子集 II](#11-子集-II)
+        * [12. 递增子序列](#12-递增子序列)
+        * [13. 无重复字符串的排列组合](#13-无重复字符串的排列组合)
+        * [14. 矩阵中的路径](#14-矩阵中的路径)
 <!-- GFM-TOC -->
 
 ## BFS
@@ -1486,5 +1491,349 @@ class Solution:
 
         self.dfs(root.left, total - root.val) 
         self.dfs(root.right, total - root.val)
+
+``` 
+
+## 8. 全排列
+
+给定一个 **没有重复** 数字的序列，返回其所有可能的全排列。
+
+46\. 全排列（middle） [力扣](https://leetcode-cn.com/problems/permutations/description/)
+
+示例 1:
+
+```html
+输入: [1,2,3]
+输出:
+[
+  [1,2,3],
+  [1,3,2],
+  [2,1,3],
+  [2,3,1],
+  [3,1,2],
+  [3,2,1]
+]
+
+```
+
+```python
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        #回溯：树的深度遍历（选择，撤销选择，剪枝）
+        def dfs(nums, path, depath, used):# path变量是一个栈
+            if depath == len(nums):# 递归的终止条件是，数已经选够
+                # 因为只用path一个变量，是指向一个内存空间，所以要用copy
+                res.append(path[:]) #path[:] == path.copy()
+                return  # 退出函数，不往下继续进行
+
+            for i in range(len(nums)):
+                if not used[i]: # 剪枝非常重要
+                    path.append(nums[i]) #选择
+                    used[i] = True # 代表该节点已经选择过
+
+                    dfs(nums, path, depath+1, used)
+
+                    path.pop()  # 撤销选择
+                    used[i] = False
+
+        res = []
+        used = [False for _ in range(len(nums))] # 标记节点访问状态
+        dfs(nums, [], 0, used)
+
+        return res
+``` 
+
+## 9. 全排列 II
+
+给定一个可包含重复数字的序列 nums ，按任意顺序 返回所有不重复的全排列
+
+47\. 全排列 II（middle） [力扣](https://leetcode-cn.com/problems/permutations-ii/description/)
+
+示例 1:
+
+```html
+输入：nums = [1,1,2]
+输出：
+[[1,1,2],
+ [1,2,1],
+ [2,1,1]]
+
+
+输入：nums = [1,2,3]
+输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+
+```
+
+```python
+class Solution:
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        #回溯：树的深度遍历（选择，撤销选择，剪枝）
+        def dfs(nums, path, depath, used):# path变量是一个栈
+            if depath == len(nums):# 递归的终止条件是，数已经选够
+                # 因为只用path一个变量，是指向一个内存空间，所以要用copy
+                res.append(path[:]) #path[:] == path.copy()
+                return  # 退出函数，不往下继续进行
+
+            for i in range(len(nums)):
+                if not used[i]:
+                    #增加剪枝条件,特别注意used[i-1]==False 条件，
+                    #因为不能把 [1,1,2] 给去掉 选择第2个1时第一个1的状态为True
+                    #相比 46. 全排列 只是增加了剪枝条件其余代码全不用变
+                    if i>0 and nums[i]==nums[i-1] and used[i-1]==False:
+                        continue # 进行下一次循环
+
+                    path.append(nums[i]) #选择
+                    used[i] = True # 代表该节点已经选择过
+
+                    dfs(nums, path, depath+1, used)
+
+                    path.pop()  # 撤销选择
+                    used[i] = False
+
+        res = []
+        used = [False for _ in range(len(nums))]
+        nums.sort() # 先对列表排序, 因为要 nums[i]==nums[i-1]
+        dfs(nums, [], 0, used)
+
+        return res
+``` 
+
+## 10. 子集
+
+给定一组**不含重复元素**的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+说明：**解集不能包含重复的子集**。
+
+78\. 子集（middle） [力扣](https://leetcode-cn.com/problems/subsets/description/)
+
+示例 1:
+
+```html
+输入: nums = [1,2,3]
+输出:
+[
+  [3],
+  [1],
+  [2],
+  [1,2,3],
+  [1,3],
+  [2,3],
+  [1,2],
+  []
+]
+
+```
+
+```python
+class Solution:
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        # 回溯法
+        def backtrack(nums, path, depath):
+            # 递归结束条件 比较特殊， 都满足，只要进来就res apppend
+            res.append(path[:]) # path[:] == path.copy()
+
+            #注意这里用(depath, n)，不用(0, n) 过滤前面用过的数字
+            for i in range(depath, n): # 通过depath 结束递归 ！！！
+                path.append(nums[i]) # 选择 
+
+                backtrack(nums, path, i+1) # 这里用 i+1 进行剪枝
+
+                path.pop() # 撤销 (因为共用一个变量path 所以要会在现场)
+
+        res = []
+        n = len(nums)
+        backtrack(nums, [], 0)
+        
+        return res
+``` 
+
+## 11. 子集 II
+
+给定一个**可能包含重复元素**的整数数组 nums，返回该数组所有可能的子集（幂集）。
+
+说明：**解集不能包含重复的子集**。
+
+90\. 子集 II（middle） [力扣](https://leetcode-cn.com/problems/subsets-ii/description/)
+
+示例 1:
+
+```html
+输入: [1,2,2]
+输出:
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+
+```
+
+```python
+class Solution:
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        
+        #相对与78.子集 增加了一个sort()和used节点标记，剪枝条件
+        def backtrack(nums, path, depath, used):
+            # 递归结束条件 比较特殊， 都满足，只要进来就res apppend
+            res.append(path[:]) #path[:] == path.copy()
+
+            #注意这里用(depath, n)，不用(0, n) 过滤前面用过的数字
+            for i in range(depath, n):# 通过depath 结束递归
+                # 剪枝 去重 
+                if i > 0 and nums[i] == nums[i-1] and used[i-1]==False:
+                    continue
+
+                path.append(nums[i]) # path为栈
+                used[i] = True
+
+                backtrack(nums, path, i+1, used) # i+1 是不使用重复元素
+
+                path.pop()
+                used[i] = False 
+
+        res = []
+        n = len(nums)
+        nums.sort() # 目的去重 nums[i] == nums[i-1]
+        used = [False for _ in range(n)] # 增加一个节点是否访问过的标记
+        backtrack(nums, [], 0, used)
+
+        return res
+
+``` 
+
+## 12. 递增子序列
+
+给定一个整型数组, 你的任务是找到所有该数组的递增子序列，递增子序列的长度至少是2。
+
+给定数组中可能包含重复数字，相等的数字应该被视为递增的一种情况
+
+491\. 递增子序列（middle） [力扣](https://leetcode-cn.com/problems/increasing-subsequences/description/)
+
+示例 1:
+
+```html
+输入: [4, 6, 7, 7]
+输出: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+
+```
+
+```python
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+
+        def backtrace(nums, temp):
+            if len(temp)>=2 and temp not in res:
+                res.append(temp)
+
+            if not nums:return
+
+            for i in range(len(nums)):
+                #temp是一个递增数组  进来的数必须大于等于temp 数组最后一个
+                if not temp or nums[i] >= temp[-1]:
+                    backtrace(nums[i+1:], temp+[nums[i]])
+
+        res = []
+        backtrace(nums, [])
+
+        return res
+
+``` 
+
+## 13. 无重复字符串的排列组合
+
+**无重复字符串**的排列组合。编写一种方法，计算某字符串的所有排列组合，**字符串每个字符均不相同**
+
+493\. 无重复字符串的排列组合（middle） [力扣](https://leetcode-cn.com/problems/permutation-i-lcci/description/)
+
+示例 1:
+
+```html
+ 输入：S = "qwe"
+ 输出：["qwe", "qew", "wqe", "weq", "ewq", "eqw"]
+
+
+ 输入：S = "ab"
+ 输出：["ab", "ba"]
+
+```
+
+```python
+class Solution:
+    def permutation(self, S: str) -> List[str]:
+
+        def backtrack(path_s, n):
+            if len(path_s) == n:
+                res.append(path_s)
+                return  # 退出
+
+            for i in range(n):
+                if not used[i]:
+                    used[i] = True # 标记使用了
+                    backtrack(path_s+S[i], n)
+                    used[i] = False
+
+        res = []
+        n =len(S)
+        used =[False] * n #标记是否选择过了
+        backtrack("", n)
+
+        return res
+``` 
+
+
+
+## 14. 矩阵中的路径
+
+```html
+请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一格开始，每一步可以在矩阵中向左、右、上、下移动一格。如果一条路径经过了矩阵的某一格，那么该路径不能再次进入该格子。例如，在下面的3×4的矩阵中包含一条字符串“bfce”的路径（路径中的字母用加粗标出）。
+
+[["a","b","c","e"],
+ ["s","f","c","s"],
+ ["a","d","e","e"]]
+
+但矩阵中不包含字符串“abfb”的路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入这个格子。
+```
+
+496\. 矩阵中的路径（middle） [力扣](https://leetcode-cn.com/problems/ju-zhen-zhong-de-lu-jing-lcof/description/)
+
+示例 1:
+
+```html
+输入：board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED"
+输出：true
+
+输入：board = [["a","b"],["c","d"]], word = "abcd"
+输出：false
+
+```
+
+```python
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+
+        def dfs(i, j, k):
+            #边界溢出or不相等的情况
+            if not 0 <= i < len(board) or not 0 <= j < len(board[0]) or board[i][j] != word[k]: 
+                return False
+            
+            # 如果word判断完了
+            if k == len(word) - 1: return True
+
+            board[i][j] = '' #置空 代表此元素已访问过，防止之后搜索时重复访问
+            # 左、右、上、下 4个方向
+            res = dfs(i + 1, j, k + 1) or dfs(i - 1, j, k + 1) or dfs(i, j + 1, k + 1) or dfs(i, j - 1, k + 1)
+            board[i][j] = word[k] #board[i][j] 元素还原至初始值，即 word[k]
+
+            return res
+
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if dfs(i, j, 0): 
+                    return True
+
+        return False
 
 ``` 
