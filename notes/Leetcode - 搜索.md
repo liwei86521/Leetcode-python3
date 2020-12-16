@@ -23,8 +23,9 @@
         * [2. 括号生成](#2-括号生成)
         * [3. 组合总和](#3-组合总和)
         * [4. 组合总和 II](#4-组合总和-II)
-        * [5. 路径总和 II](#5-路径总和-II)
-        * [6. 路径总和 III](#6-路径总和-III)
+        * [5. 组合总和 III](#5-组合总和-III)
+        * [6. 路径总和 II](#5-路径总和-II)
+        * [7. 路径总和 III](#6-路径总和-III)
         * [4. 输出二叉树中所有从根到叶子的路径](#4-输出二叉树中所有从根到叶子的路径)
         * [5. 排列](#5-排列)
 <!-- GFM-TOC -->
@@ -1327,7 +1328,49 @@ class Solution:
 
 ```
 
-## 5. 路径总和 II
+## 5. 组合总和 III
+
+找出所有相加之和为 n 的 k 个数的组合。**组合中只允许含有 1 - 9 的正整数**，并且每种组合中不存在重复的数字。
+
+216\. 组合总和 III（middle） [力扣](https://leetcode-cn.com/problems/combination-sum-iii/description/)
+
+示例 1:
+
+```html
+输入: k = 3, n = 7
+输出: [[1,2,4]]
+
+输入: k = 3, n = 9
+输出: [[1,2,6], [1,3,5], [2,3,4]]
+
+```
+
+```python
+class Solution:
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+
+        def backtrack(path, total, level):
+            # recursion terminator condition
+            if k == len(path) and total == 0 :
+                res.append(path[:])
+                return
+
+            for i in range(level, 10):# 这里用10 替代 n+1 因为 组合中只允许含有 1 - 9 的正整数
+                if total >= i: # 剪枝
+                    path.append(i) # 选择
+                    #backtrack(path+[i], total-i, i+1) # 这一行抵3行，但是浪费空间，不推荐
+                    backtrack(path, total-i, i+1)
+                    path.pop() # 撤销
+
+
+        res = []
+        backtrack([], n, 1)
+
+        return res
+
+``` 
+
+## 6. 路径总和 II
 
 给定一个二叉树和一个目标和，找到所有从根节点到叶子节点路径总和等于给定目标和的路径。
 
@@ -1388,7 +1431,7 @@ class Solution:
 
 ``` 
 
-## 6. 路径总和 III
+## 7. 路径总和 III
 
 给定一个二叉树，它的每个结点都存放着一个整数值。
 
