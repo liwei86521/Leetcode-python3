@@ -432,7 +432,7 @@ class Solution:
 
         # 头结点的位置在 n-k处，尾节点在头结点前面 故为n-k-1 因为k有可能大于n为了
         # 避免出现负数 尾节点 n-k%n-1
-        for i in range(0, n-k%n-1):
+        for i in range(0, n-k%n-1): #  # 不能用 k%n eg bad case: [1, 2] 移动 0
             new_tail = new_tail.next
             
         new_head = new_tail.next # 得到新头结点
