@@ -365,7 +365,7 @@ class Solution:
         """ 把原链表分成奇偶两个链表，再把奇数聊表尾部与偶数链表头部连接起来
         空间复杂度应为 O(1) 即只能用常数个变量，时间复杂度应为 O(n)
         """
-        while not head or not head.next:
+        if not head or not head.next:
             return head
 
         odd = head # 奇数链表头指针,ps 头指针始终没有变
