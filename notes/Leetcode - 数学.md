@@ -5,9 +5,8 @@
         * [1. 计数质数](#1-计数质数)
         * [2. 最大公约数](#2-最大公约数)
     * [进制转换](#进制转换)
-        * [1. 7 进制](#1-7-进制)
-        * [2. 16 进制](#2-16-进制)
-        * [3. 26 进制](#3-26-进制)
+        * [1. 七进制数](#1-七进制数)
+        * [2. 数字转换为十六进制数](#2-数字转换为十六进制数)
     * [阶乘](#阶乘)
         * [1. 统计阶乘尾部有多少个 0](#1-统计阶乘尾部有多少个-0)
     * [字符串加法减法](#字符串加法减法)
@@ -99,3 +98,107 @@ def lcm(a, b):
 
 ``` 
 
+## 进制转换
+
+### 1. 七进制数
+
+给定一个整数，将其转化为7进制，并以字符串形式输出。
+
+504\. 七进制数（easy） [力扣](https://leetcode-cn.com/problems/base-7/description/)
+
+示例 1:
+
+```html
+输入: 100
+输出: "202"
+
+输入: -7
+输出: "-10"
+
+```
+
+```python
+class Solution:
+    def convertToBase7(self, num: int) -> str:
+        pre = "-" if num < 0 else ""
+        num = abs(num)
+        result = ""
+
+        while num != 0:
+            # divmod => (x//y, x%y)
+            num, temp = divmod(num, 7)
+            result = str(temp) + result
+
+        return pre + result if result else "0"
+
+``` 
+
+### 2. 数字转换为十六进制数
+
+```html
+给定一个整数，编写一个算法将这个数转换为十六进制数。对于负整数，我们通常使用 补码运算 方法。
+
+注意:
+
+十六进制中所有字母(a-f)都必须是小写。
+十六进制字符串中不能包含多余的前导零。如果要转化的数为0，那么以单个字符'0'来表示；
+对于其他情况，十六进制字符串中的第一个字符将不会是0字符。 
+
+给定的数确保在32位有符号整数范围内。
+不能使用任何由库提供的将数字直接转换或格式化为十六进制的方法。
+```
+
+405\. 数字转换为十六进制数（easy） [力扣](https://leetcode-cn.com/problems/base-7/description/)
+
+示例 1:
+
+```html
+输入:
+26
+
+输出:
+"1a"
+
+
+输入:
+-1
+
+输出:
+"ffffffff"
+```
+
+```python
+class Solution:
+    def toHex(self, num: int) -> str:
+        #数值一律用补码来表示和存储： 正数的源码最高位是0，正数的源码和反码补码都是一样的， 
+        #负数的补码是在原码的基础上除符号位外其余位取反后+1
+        
+        res = "" # 用来返回结果
+        # generate num to cha dic
+        num_dic = {}
+        for i in range(10):
+            num_dic[i] = str(i)
+        for i in range(10, 16):
+            num_dic[i] = chr(i + 87) # chr(97) ---> 'a'
+
+        # process non-positive num
+        if num == 0:
+            return "0"
+        elif num < 0: # 这里是关键, 把负数当成补码来算，正数的源码就是补码
+            num += 2 ** 32 # -1就变成了 补码为 32位1 然后求和了
+
+        while num:
+            item = (num & 15)
+            res = num_dic[item] + res  # 注意这里顺序不能变
+            num = (num >> 4) #num =(num >> 4) 相等于 num = num // 16
+            
+        return res
+
+       
+    '''
+        def toHex(self, num: int) -> str:
+            print(hex(num=26)) # 0x1a
+
+    '''
+
+``` 
