@@ -468,9 +468,9 @@ s: "abab" p: "ab"
 
 ```python
 class Solution:
-    def findAnagrams(self, s: str, p: str) -> List[int]: 
+    def findAnagrams(self, s: str, p: str) -> List[int]:
         # 很经典的 哈希表题目
-        dict_p = {}# 如果涉及到对顺序无要求的题目，可以考虑dict
+        dict_p = {}
         for i in p:
             dict_p[i] = dict_p.get(i, 0) + 1
 
@@ -479,19 +479,23 @@ class Solution:
         len_p = len(p) # 后面要重复用到，提高效率
 
         #print(dict_p) # {'a': 1, 'b': 1, 'c': 1}
+        for i, ch in enumerate(s):
+            dict_s[ch] = dict_s.get(ch, 0) + 1 # 0是默认值
 
-        for k, v in enumerate(s):
-            dict_s[v] = dict_s.get(v, 0) + 1 # 0是默认值
+            # 先判断 2个 字典是否相等
+            if dict_s == dict_p:
+                res.append( i - len_p + 1) # 注意这里
 
-            if dict_s == dict_p:# 至少长度要一致，所有必须先循环几次
-                res.append( k - len_p + 1) # 注意这里
-
-            if (k - len_p + 1) >= 0: #当循环次数超过len_p后，就对dict_s进行更新或删除操作
+            #if (i - len_p + 1) >= 0: #当循环次数超过len_p后，就对dict_s进行更新或删除操作
+            # ps: 这里不能用len(temp) : {"b":2, "a":1} len(temp) == 2 不符合期望
+            if sum(dict_s.values()) >= len_p: #当dict_s里面元素的个数和 >= len_p后，就对dict_s进行更新或删除操作
+                ch_del = s[i - len_p + 1] # 表示要删除的字符
                 # 每往后循环一次index，就减去前面掉出去的那个字符一次(eg: 第1个字符)
-                dict_s[s[k - len_p + 1]] =  dict_s.get(s[k - len_p + 1]) - 1
-                # 如果被-1的那个字符是单个字符，删除掉，保证dict_s在进入下次循环前，所有k对应的v的和为2
-                if dict_s[s[k - len_p + 1]] == 0: # 删除相应的 key
-                    del dict_s[s[k - len_p + 1]]
+                dict_s[ch_del] =  dict_s.get(ch_del) - 1
+
+                # 如果被-1的那个字符是单个字符，删除掉
+                if dict_s[ch_del] == 0: # 删除相应的 key
+                    del dict_s[ch_del]
 
         return res
 ``` 
