@@ -185,7 +185,7 @@ class Solution:
             num += 2 ** 32 # -1就变成了 补码为 32位1 然后求和了
 
         while num:
-            item = (num & 15)
+            item = (num & 15) # 求的就是余数 等效于  num % 16
             res = num_dic[item] + res  # 注意这里顺序不能变
             num = (num >> 4) #num =(num >> 4) 相等于 num = num // 16
             
