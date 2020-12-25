@@ -2,14 +2,15 @@
 <!-- GFM-TOC -->
 * [Leetcode - 位运算](#leetcode---位运算)
     * [0. 原理](#0-原理)
-    * [1. 统计两个数的二进制表示有多少位不同](#1-统计两个数的二进制表示有多少位不同)
-    * [2. 数组中唯一一个不重复的元素](#2-数组中唯一一个不重复的元素)
-    * [3. 找出数组中缺失的那个数](#3-找出数组中缺失的那个数)
-    * [4. 数组中不重复的两个元素](#4-数组中不重复的两个元素)
-    * [5. 翻转一个数的比特位](#5-翻转一个数的比特位)
-    * [6. 不用额外变量交换两个整数](#6-不用额外变量交换两个整数)
-    * [7. 判断一个数是不是 2 的 n 次方](#7-判断一个数是不是-2-的-n-次方)
-    * [8.  判断一个数是不是 4 的 n 次方](#8--判断一个数是不是-4-的-n-次方)
+    * [1. 只出现一次的数字](#1-只出现一次的数字)
+    * [2. 找不同](#2-找不同)
+    * [3. 汉明距离](#3-汉明距离)
+    * [4. 位1的个数](#4-位1的个数)
+    * [5. 数字的补数](#5-数字的补数)
+    * [6. 交替位二进制数](#6-交替位二进制数)
+    * [7. 比特位计数](#7-比特位计数)
+    * [8.  数字范围按位与](#8--数字范围按位与)
+    
     * [9. 判断一个数的位级表示是否不会出现连续的 0 和 1](#9-判断一个数的位级表示是否不会出现连续的-0-和-1)
     * [10. 求一个数的补码](#10-求一个数的补码)
     * [11. 实现整数的加法](#11-实现整数的加法)
@@ -151,3 +152,313 @@ n-(n&(-n)) 则可以去除 n 的位级表示中最低的那一位 1，和 n&(n-1
 要得到 1 到 i 位为 1 的 mask，(1<<i)-1 即可，例如将 (1<<4)-1 = 00010000-1 = 00001111。
 
 要得到 1 到 i 位为 0 的 mask，只需将 1 到 i 位为 1 的 mask 取反，即 ~((1<<i)-1)。
+
+## 1. 只出现一次的数字
+
+给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+
+136\. 只出现一次的数字（easy） [力扣](https://leetcode-cn.com/problems/single-number/description/)
+
+示例 1:
+
+```html
+输入: [2,2,1]
+输出: 1
+
+输入: [4,1,2,1,2]
+输出: 4
+
+```
+
+```python
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+        res = 0 # 与零一直异或就可以了
+        for i in nums:
+            res = res ^ i
+        
+        return res
+        
+``` 
+
+## 2. 找不同
+
+给定两个字符串 s 和 t，它们只包含小写字母。
+
+字符串 t 由字符串 s 随机重排，然后在随机位置添加一个字母。
+
+请找出在 t 中被添加的字母。
+
+389\. 找不同（easy） [力扣](https://leetcode-cn.com/problems/find-the-difference/description/)
+
+示例 1:
+
+```html
+输入：s = "abcd", t = "abcde"
+输出："e"
+解释：'e' 是那个被添加的字母。
+
+输入：s = "", t = "y"
+输出："y"
+
+输入：s = "a", t = "aa"
+输出："a"
+
+输入：s = "ae", t = "aea"
+输出："a"
+
+```
+
+```python
+class Solution:
+    def findTheDifference(self, s: str, t: str) -> str:
+        ret = 0  # python3 异或方法 推荐
+        for c in s + t:
+            ret = ret ^ ord(c) #异或只针对 int类型
+        return chr(ret)
+        
+``` 
+
+## 3. 汉明距离
+
+两个整数之间的汉明距离指的是这两个数字对应二进制位不同的位置的数目。
+
+给出两个整数 x 和 y，计算它们之间的汉明距离。
+
+注意：
+0 ≤ x, y < 2**31.
+
+461\. 汉明距离（easy） [力扣](https://leetcode-cn.com/problems/hamming-distance/description/)
+
+示例 1:
+
+```html
+输入: x = 1, y = 4
+
+输出: 2
+
+解释:
+1   (0 0 0 1)
+4   (0 1 0 0)
+       ↑   ↑
+
+上面的箭头指出了对应二进制位不同的位置。
+
+```
+
+```python
+class Solution:
+    def hammingDistance(self, x: int, y: int) -> int:
+        
+        # 两个二进制中 位数不同的个数，--->其实就是求 2个数异或后 二进制的 1的个数
+        res = x ^ y
+        
+        distance = 0
+        while res:
+            
+            if res & 1:
+                distance += 1
+
+            res = res >> 1
+        return distance
+
+print(Solution().hammingDistance(28, 3)) # 5
+        
+``` 
+
+## 4. 位1的个数
+
+编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 '1' 的个数（也被称为汉明重量）
+
+注意： 输入必须是长度为 32 的 二进制串
+
+191\. 位1的个数（easy） [力扣](https://leetcode-cn.com/problems/number-of-1-bits/description/)
+
+示例 1:
+
+```html
+输入：00000000000000000000000000001011
+输出：3
+解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 '1'。
+
+输入：00000000000000000000000010000000
+输出：1
+解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 '1'。
+
+输入：11111111111111111111111111111101
+输出：31
+解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 '1'。
+
+```
+
+```python
+class Solution:
+    def hammingWeight(self, n: int) -> int:
+        #时间复杂度：O(1)，n为32位的数，操作次数为二进制的位数
+        res=0
+        while n:
+            res+=n&1
+            n>>=1
+        return res
+
+
+    def hammingWeight(self, n: int) -> int: # 更高级
+        #时间复杂度：O(1)，n为32位的数，操作次数为二进制中1的个数
+        res=0
+        while n:
+            n&=n-1 # 消除最后一位 1
+            res+=1
+
+        return res
+``` 
+
+## 5. 数字的补数
+
+给定一个正整数，输出它的补数。补数是对该数的二进制表示取反。
+
+476\. 数字的补数（easy） [力扣](https://leetcode-cn.com/problems/number-complement/description/)
+
+示例 1:
+
+```html
+输入: 5
+输出: 2
+解释: 5 的二进制表示为 101（没有前导零位），其补数为 010。所以你需要输出 2 。
+
+输入: 1
+输出: 0
+解释: 1 的二进制表示为 1（没有前导零位），其补数为 0。所以你需要输出 0 。
+
+```
+
+```python
+class Solution:
+    def findComplement(self, num: int) -> int:
+        #找到一个二进制位数与num相同但每一位都为1的数，然后用这个数 减去 num。
+        #例如 0b111-0b101=0b10,7-5=2,这里7就是我们要找的数
+        i = 1
+        # 最高位为1，其余为0，刚好比num大然后用这个数减去1就是我们要找的数
+        while num >= i: 
+            i = i << 1 # 每次向左移1位 i=0b1000
+            
+        return i-1-num
+``` 
+
+## 6. 交替位二进制数
+
+给定一个正整数，检查它的二进制表示是否总是 0、1 交替出现：换句话说，就是二进制表示中相邻两位的数字永不相同。
+
+693\. 交替位二进制数（easy） [力扣](https://leetcode-cn.com/problems/binary-number-with-alternating-bits/description/)
+
+示例 1:
+
+```html
+输入：n = 5
+输出：true
+解释：5 的二进制表示是：101
+
+输入：n = 7
+输出：false
+解释：7 的二进制表示是：111.
+
+输入：n = 11
+输出：false
+解释：11 的二进制表示是：1011.
+
+输入：n = 10
+输出：true
+解释：10 的二进制表示是：1010.
+
+输入：n = 3
+输出：false
+
+```
+
+```python
+class Solution:
+    def hasAlternatingBits(self, n: int) -> bool:
+        tmp = n^(n>>1)
+        return tmp&(tmp+1) == 0
+
+``` 
+
+## 7. 比特位计数
+
+给定一个非负整数 num。对于 **0 ≤ i ≤ num** 范围中的每个数字 i ，计算其二进制数中的 1 的数目并将它们作为数组返回
+
+338\. 比特位计数（middle） [力扣](https://leetcode-cn.com/problems/counting-bits/description/)
+
+示例 1:
+
+```html
+输入: 2
+输出: [0,1,1]
+
+输入: 5
+输出: [0,1,1,2,1,2]
+
+```
+
+```python
+class Solution:
+    def countBits(self, num: int) -> List[int]:
+
+        def bin_count(n):
+            count=0
+            while n:
+                n&=n-1
+                count+=1
+            return count
+
+
+        res=[]
+
+        for i in range(num+1):
+            res.append(bin_count(i))
+        return res
+
+``` 
+
+## 8. 数字范围按位与
+
+给定范围 [m, n]，其中 0 <= m <= n <= 2147483647，返回此范围内所有数字的按位与（包含 m, n 两端点）
+
+201\. 数字范围按位与（middle） [力扣](https://leetcode-cn.com/problems/bitwise-and-of-numbers-range/description/)
+
+示例 1:
+
+```html
+输入: [5,7]
+输出: 4
+
+输入: [0,1]
+输出: 0
+
+```
+
+```python
+class Solution:
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        
+        while(n>m): # ps 这样会减少很多运算次数eg: [m,n] ---> [5, 20] 2次循环就得到答案为0了
+                n = n & (n-1)
+        return n
+    
+    
+    '''
+    def rangeBitwiseAnd(self, m: int, n: int) -> int:
+        if n-m == 0: # 超出时间限制  [m,n] ---> [5, 20] 循环次数15，其实没必要,因为中间可能会出现0
+            return n
+
+        res = m
+        for i in range(m+1, n+1):
+            if res == 0: #减少循环次数 还是超时了
+                return 0
+            res = res & i
+
+        return res
+    
+    '''
+
+``` 
