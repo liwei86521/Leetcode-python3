@@ -10,12 +10,10 @@
     * [6. 交替位二进制数](#6-交替位二进制数)
     * [7. 比特位计数](#7-比特位计数)
     * [8.  数字范围按位与](#8--数字范围按位与)
-    
-    * [9. 判断一个数的位级表示是否不会出现连续的 0 和 1](#9-判断一个数的位级表示是否不会出现连续的-0-和-1)
-    * [10. 求一个数的补码](#10-求一个数的补码)
-    * [11. 实现整数的加法](#11-实现整数的加法)
-    * [12. 字符串数组最大乘积](#12-字符串数组最大乘积)
-    * [13. 统计从 0 \~ n 每个数的二进制表示中 1 的个数](#13-统计从-0-\~-n-每个数的二进制表示中-1-的个数)
+    * [9. 交换数字](#9-交换数字)
+    * [10. 字母大小写全排列](#10-字母大小写全排列)
+    * [11. 整数转换](#11-整数转换)
+    * [12. 只出现一次的数字 III](#12-只出现一次的数字-III)
 <!-- GFM-TOC -->
 
 
@@ -461,4 +459,221 @@ class Solution:
     
     '''
 
+``` 
+
+## 9. 交换数字
+
+编写一个函数，不用临时变量，直接交换numbers = [a, b]中a与b的值。
+
+numbers.length == 2
+
+202\. 交换数字（middle） [力扣](https://leetcode-cn.com/problems/swap-numbers-lcci/description/)
+
+示例 1:
+
+```html
+输入: numbers = [1,2]
+输出: [2,1]
+
+```
+
+```python
+class Solution:
+    def swapNumbers(self, numbers: List[int]) -> List[int]:
+        # a = a ^ b, b = a ^ b, a = a ^ b
+        numbers[0] = numbers[0] ^ numbers[1]
+        numbers[1] = numbers[1] ^ numbers[0]
+        numbers[0] = numbers[0] ^ numbers[1]
+        
+        return numbers
+
+
+    """
+    def swapNumbers(self, numbers: List[int]) -> List[int]:
+        numbers[0],numbers[1] = numbers[1], numbers[0]
+
+        return numbers
+    """
+
+``` 
+
+## 10. 字母大小写全排列
+
+给定一个字符串S，通过将字符串S中的每个字母转变大小写，我们可以获得一个新的字符串。返回所有可能得到的字符串集合。
+
+784\. 字母大小写全排列（middle） [力扣](https://leetcode-cn.com/problems/letter-case-permutation/description/)
+
+示例 1:
+
+```html
+示例：
+输入：S = "a1b2"
+输出：["a1b2", "a1B2", "A1b2", "A1B2"]
+
+输入：S = "3z4"
+输出：["3z4", "3Z4"]
+
+输入：S = "12345"
+输出：["12345"]
+
+```
+
+```python
+class Solution:
+    def letterCasePermutation(self, S: str) -> List[str]:
+
+        res = [""] # 设置一个初始值，就可以减少大量code
+        for i in S:
+            t_lis = []
+            for j in res:
+                if i.isalpha():
+                    t_lis.append(j+i.lower())
+                    t_lis.append(j+i.upper())
+                else:
+                    t_lis.append(j+i)
+
+            res = t_lis
+
+        return res
+    
+    
+    def letterCasePermutation_v1(self, S: str) -> List[str]:
+
+        res = [] # 没有设置初始值，写起来很尴尬
+        for i in S:
+            t_lis = []
+            if not res:
+                if i.isalpha():
+                    res.append(i.lower())
+                    res.append(i.upper())
+                else:
+                    res.append(i)
+            else:
+                for j in res:
+                    if i.isalpha():
+                        t_lis.append(j+i.lower())
+                        t_lis.append(j+i.upper())
+                    else:
+                        t_lis.append(j+i)
+                res = t_lis
+
+        return res
+``` 
+
+## 11. 整数转换
+
+整数转换。编写一个函数，确定需要改变几个位才能将整数A转成整数B。
+
+A，B范围在[-2147483648, 2147483647]之间  
+
+784\. 整数转换（middle） [力扣](https://leetcode-cn.com/problems/convert-integer-lcci/description/)
+
+示例 1:
+
+```html
+输入：A = 29 （或者0b11101）, B = 15（或者0b01111）
+ 输出：2
+
+ 输入：A = 1，B = 2
+ 输出：2
+
+```
+
+```python
+class Solution:
+    def convertInteger(self, A: int, B: int) -> int:
+        #整形数在内存中是以 补码 的形式存放的，输出的时候同样也是按照 补码 输出的
+        #print(bin(-1)) # -0b1
+        #print(bin(-1 & 0xffffffff)) #-1的补码 0b11111111111111111111111111111111
+        # n &= (n - 1) 能够将n最右侧为1的位变0 
+        
+        #  将A,B转化为无符号数
+        C = (A & 0xffffffff) ^ (B & 0xffffffff)  # 32 位 考虑负数
+        #C = A  ^ B   # 如果这样 遇到负数eg  (-1, 1)  会成为死循环
+        #print("C ---> ", C)
+        cnt = 0
+        while C != 0:
+            C = C & (C - 1)  # 清除最低位1
+            #print("jjj --> ", C)
+            cnt += 1
+
+        return cnt
+
+#print(Solution().convertInteger(2, -1)) #答案为 31
+
+"""
+为什么要和 oxffffffff 作与运算
+一般来讲，整形数在内存中是以 补码 的形式存放的，输出的时候同样也是按照 补码 输出的。
+
+但是在 Python 中，情况是这样的：
+
+整型是以 **补码** 形式存放的，输出的时候是按照 **二进制** 表示输出的；
+对于 bin(x)（x 为 十进制负数），输出的是它的原码的二进制表示加上一个负号（ print(bin(-2)) # -0b10 ）
+对于 bin(x)（x 为 十六进制负数），输出的是对应的二进制表示。
+所以为了获得十进制负数的补码，我们需要手动将其和 0xffffffff 进行与操作，得到一个十六进制数，
+再交给 bin() 转化，这时内存中得到的才是你想要的补码。
+
+"""
+``` 
+
+## 12. 只出现一次的数字 III
+
+给定一个整数数组 nums，其中恰好有两个元素只出现一次，其余所有元素均出现两次。 找出只出现一次的那两个元素。
+
+260\. 只出现一次的数字 III（middle） [力扣](https://leetcode-cn.com/problems/single-number-iii/description/)
+
+示例 1:
+
+```html
+输入: [1,2,1,3,2,5]
+输出: [3,5] 或 [5, 3]
+
+```
+
+```python
+class Solution:
+    def singleNumber(self, nums: List[int]) -> List[int]:
+    
+        res, first, second = 0, 0, 0
+        # 相同元素的异或为0 --> 最终结果 是两个不同元素异或的结果
+        for val in nums:
+            res = res ^ val
+        
+        # 求出res中低位第一个为1的位置(1100 --> 4)
+        temp = res & (-res)
+        
+        # 遍历元素, 通过指定位是0还是1,分为2组
+        # 此时不同的元素一定在不同的组中
+        # 对每组求异或即可分别求出两个不同的元素
+        for ele in nums:
+            if ele & temp: # 求出 任意一个个数为1 的数
+                first ^= ele
+
+        # 方法2: 通过first和res求出second的值
+        second = res ^ first
+        return [first, second]
+
+"""
+1. 先熟悉一下位运算相关的概念:
+    1. num ^ num = 0
+    2. num ^ (-num) 可以使num中低位第一个1为1, 并使其他位全为0
+2. 通过 num ^ num = 0: 
+    我们可以排除掉列表中重复的元素, 最终结果只是两个只出现一次的元素求"异或"的结果
+3. 通过 num ^ (-num) 
+    因为剩下的两个元素值不相等, 所以他们之中一定有一个位上的值不相等, 
+    那么我们可以通过"异或"找到第一个不相等的位即可区分两个元素
+    
+4. 然后根据指定位数值位0 或1将原列表中的元素分为2组(此时不同的两个元素一定在不同的组中)
+5. 然后再对每组进行取"异或", 每组的最终结果就是那个不同的元素
+
+    def singleNumber(nums: List[int]) -> List[int]:
+        # 列表生成式
+        #res= [i for i in nums if nums.count(i) == 1] # OK
+
+        from collections import Counter
+         # 这里相比上面 不用每次都 count
+        res = [key for key, val in Counter(nums).items() if val==1]
+
+        return res
+"""
 ``` 
