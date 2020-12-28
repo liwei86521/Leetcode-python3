@@ -376,6 +376,8 @@ class Solution:
 ```python
 class Solution:
     def hasAlternatingBits(self, n: int) -> bool:
+        # temp = n // 2,   n & temp == 0 # 这是错误的  eg: 4
+        
         tmp = n^(n>>1)
         return tmp&(tmp+1) == 0
 
