@@ -859,7 +859,7 @@ class Solution:
                 if len(heap) < k:
                     heapq.heappush(heap, (-(num1 + num2) , [num1, num2]))
                 else:
-                    if num1 + num2 < -heap[0][0]:
+                    if -(num1 + num2) > heap[0][0]:
                         # heapq.heappop(heap) #分解动作
                         # heapq.heappush(heap, (-(num1 + num2), [num1, num2]))
                         
