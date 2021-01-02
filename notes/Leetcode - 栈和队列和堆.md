@@ -1,6 +1,6 @@
-# Leetcode - 栈和队列
+# Leetcode - 栈和队列和堆
 <!-- GFM-TOC -->
-* [Leetcode 题解 - 栈和队列](#leetcode---栈和队列)
+* [Leetcode 题解 - 栈和队列和堆](#leetcode---栈和队列和堆)
     * [1. 用栈实现队列](#1-用栈实现队列)
     * [2. 用队列实现栈](#2-用队列实现栈)
     * [3. 最小栈](#3-最小栈)
@@ -11,6 +11,8 @@
     * [8. 字符串解码](#8-字符串解码)
     * [9. 栈的压入弹出序列](#9-栈的压入弹出序列)
     * [10. 逆波兰表达式求值](#10-逆波兰表达式求值)
+    
+    * [11. 数据流中的第K大元素](#11-数据流中的第K大元素)
 <!-- GFM-TOC -->
 
 ## 1. 用栈实现队列
@@ -570,3 +572,82 @@ class Solution:
         return int(stack[0])
 ``` 
 
+
+## 11. 数据流中的第K大元素
+
+```html
+设计一个找到数据流中第 k 大元素的类（class）。注意是排序后的第 k 大元素，不是第 k 个不同的元素。
+
+请实现 KthLargest 类：
+  KthLargest(int k, int[] nums) 使用整数 k 和整数流 nums 初始化对象。
+
+  int add(int val) 返回当前数据流中第 k 大的元素。
+
+```
+
+703\. 数据流中的第 K 大元素（easy） [力扣](https://leetcode-cn.com/problems/kth-largest-element-in-a-stream/description/)
+
+示例 1:
+
+```html
+输入：
+["KthLargest", "add", "add", "add", "add", "add"]
+[[3, [4, 5, 8, 2]], [3], [5], [10], [9], [4]]
+输出：
+[null, 4, 5, 5, 8, 8]
+
+解释：
+KthLargest kthLargest = new KthLargest(3, [4, 5, 8, 2]);
+kthLargest.add(3);   // return 4
+kthLargest.add(5);   // return 5
+kthLargest.add(10);  // return 5
+kthLargest.add(9);   // return 8
+kthLargest.add(4);   // return 8
+
+```
+
+```python
+class KthLargest(object):
+    import heapq
+    def __init__(self, k, nums):
+        """
+        :type k: int
+        :type nums: List[int]
+        """
+        # self k
+        self.k = k
+        self.heap = nums # heap其实就是个list
+        heapq.heapify(self.heap) # 原地把一个list调整成堆
+
+        # 减小到k
+        while len(self.heap) > k:
+            heapq.heappop(self.heap)
+
+    def add(self, val):
+        """
+        :type val: int
+        :rtype: int
+        """
+        
+        if len(self.heap) < self.k: # 小于堆长度，则直接添加进去
+            heapq.heappush(self.heap, val)
+            
+        elif self.heap[0] < val: # 新的值更大，更新
+            heapq.heapreplace(self.heap, val)
+
+        return self.heap[0]
+
+    """
+    1、heapq.heapify可以原地把一个list调整成堆
+    2、heapq.heappop可以弹出堆顶，并重新调整
+    3、heapq.heappush可以新增元素到堆中
+    4、heapq.heapreplace可以替换堆顶元素，并调整下
+    5、为了维持为K的大小，初始化可能需要删减，后面处理:不满K个就新增，否则做替换；
+    6、heapq其实是对一个list做原地的处理，第一个元素就是最小的，直接返回就是最小的值
+
+    """
+
+# Your KthLargest object will be instantiated and called as such:
+# obj = KthLargest(k, nums)
+# param_1 = obj.add(val)
+``` 
