@@ -735,7 +735,7 @@ class Solution:
             heapq.heappush(heap, -i)  # heappush(heap, val) 向堆中插入指定值并维护。
 
         for i in arr[k:]:
-            if i < -heap[0]:  # heap[0] 返回堆中的最小值
+            if -i > heap[0]:  # heap[0] 返回堆中的最小值
                 # heapreplace(heap, val) 将堆中的最小值替换为指定值并重新维护
                 heapq.heapreplace(heap, -i)
 
