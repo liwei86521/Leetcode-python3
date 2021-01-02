@@ -712,7 +712,7 @@ class Solution:
 
 设计一个算法，找出数组中最小的k个数。以任意顺序返回这k个数均可
 
-123\. 最后一块石头的重量（easy） [力扣](https://leetcode-cn.com/problems/smallest-k-lcci/description/)
+123\. 最小K个数（easy） [力扣](https://leetcode-cn.com/problems/smallest-k-lcci/description/)
 
 示例 1:
 
