@@ -18,7 +18,6 @@
 - [栈和队列](notes/Leetcode%20-%20栈和队列.md)
 - [树](notes/Leetcode%20-%20树.md)
 - [哈希表](notes/Leetcode%20-%20哈希表.md)
-- [字符串](notes/Leetcode%20-%20字符串.md)
 - [数组与矩阵](notes/Leetcode%20-%20数组与矩阵.md)
 - [位运算](notes/Leetcode%20-%20位运算.md)
 - [图](notes/Leetcode%20-%20图.md)
