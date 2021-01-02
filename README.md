@@ -15,7 +15,7 @@
 ## 数据结构相关
 
 - [链表](notes/Leetcode%20-%20链表.md)
-- [栈和队列](notes/Leetcode%20-%20栈和队列.md)
+- [栈和队列和堆](notes/Leetcode%20-%20栈和队列和堆.md)
 - [树](notes/Leetcode%20-%20树.md)
 - [哈希表](notes/Leetcode%20-%20哈希表.md)
 - [数组与矩阵](notes/Leetcode%20-%20数组与矩阵.md)
