@@ -13,6 +13,11 @@
     * [10. 逆波兰表达式求值](#10-逆波兰表达式求值)
     
     * [11. 数据流中的第K大元素](#11-数据流中的第K大元素)
+    * [12. 最后一块石头的重量](#12-最后一块石头的重量)
+    * [13. 最小K个数](#13-最小K个数)
+    * [14. 前K个高频元素](#14-前K个高频元素)
+    * [15. 数组中的第K个最大元素](#15-数组中的第K个最大元素)
+    * [16. 查找和最小的K对数字](#16-查找和最小的K对数字)
 <!-- GFM-TOC -->
 
 ## 1. 用栈实现队列
@@ -640,8 +645,8 @@ class KthLargest(object):
     """
     1、heapq.heapify可以原地把一个list调整成堆
     2、heapq.heappop可以弹出堆顶，并重新调整
-    3、heapq.heappush可以新增元素到堆中
-    4、heapq.heapreplace可以替换堆顶元素，并调整下
+    3、heapq.heappush 可以新增元素到堆中，并重新调整
+    4、heapq.heapreplace可以替换堆顶元素，并重新调整（如果有必要）
     5、为了维持为K的大小，初始化可能需要删减，后面处理:不满K个就新增，否则做替换；
     6、heapq其实是对一个list做原地的处理，第一个元素就是最小的，直接返回就是最小的值
 
@@ -650,4 +655,216 @@ class KthLargest(object):
 # Your KthLargest object will be instantiated and called as such:
 # obj = KthLargest(k, nums)
 # param_1 = obj.add(val)
+``` 
+
+## 12. 最后一块石头的重量
+
+```html
+有一堆石头，每块石头的重量都是正整数。
+
+每一回合，从中选出两块 **最重的** 石头，然后将它们一起粉碎。假设石头的重量分别为 x 和 y，
+且 x <= y。那么粉碎的可能结果如下：
+
+  如果 x == y，那么两块石头都会被完全粉碎；
+  如果 x != y，那么重量为 x 的石头将会完全粉碎，而重量为 y 的石头新重量为 y-x。
+
+最后，最多只会剩下一块石头。返回此石头的重量。如果没有石头剩下，就返回 0。
+
+```
+
+1046\. 最后一块石头的重量（easy） [力扣](https://leetcode-cn.com/problems/last-stone-weight/description/)
+
+示例 1:
+
+```html
+输入：[2,7,4,1,8,1]
+输出：1
+解释：
+先选出 7 和 8，得到 1，所以数组转换为 [2,4,1,1,1]，
+再选出 2 和 4，得到 2，所以数组转换为 [2,1,1,1]，
+接着是 2 和 1，得到 1，所以数组转换为 [1,1,1]，
+最后选出 1 和 1，得到 0，最终数组转换为 [1]，这就是最后剩下那块石头的重量。
+
+```
+
+```python
+class Solution:
+    def lastStoneWeight(self, stones: List[int]) -> int:
+        from heapq import heapify, heappush, heappop
+
+        # 这里注意去负号，因为下面想取最大值，而python heapq 为 小根堆 
+        stones = [-i for i in stones] 
+        heapify(stones) # 建堆
+        while len(stones) > 0:
+            y = -heappop(stones) # 堆中取最大值
+            if len(stones) == 0: # 说明y为前面堆中的最后一个元素
+                return y
+
+            x = -heappop(stones) # 取堆中最大值
+            if x != y:
+                heappush(stones, x - y) # x - y 为一个负值
+
+        #最后如果没有石头剩下，就返回 0
+        return 0 
+``` 
+
+## 13. 最小K个数
+
+设计一个算法，找出数组中最小的k个数。以任意顺序返回这k个数均可
+
+123\. 最后一块石头的重量（easy） [力扣](https://leetcode-cn.com/problems/smallest-k-lcci/description/)
+
+示例 1:
+
+```html
+输入： arr = [1,3,5,7,2,4,6,8], k = 4
+输出： [1,2,3,4]
+```
+
+```python
+class Solution:
+    def smallestK(self, arr: List[int], k: int) -> List[int]:
+        import heapq
+        # heapq默认生成小顶堆。若要使用大顶堆，则向堆中插入负值
+
+        if k == 0:
+            return []
+
+        heap = [] # 维护一个最大堆
+        for i in arr[:k]:
+            heapq.heappush(heap, -i)  # heappush(heap, val) 向堆中插入指定值并维护。
+
+        for i in arr[k:]:
+            if i < -heap[0]:  # heap[0] 返回堆中的最小值
+                # heapreplace(heap, val) 将堆中的最小值替换为指定值并重新维护
+                heapq.heapreplace(heap, -i)
+
+        #任意顺序返回这k个数均可  [4,3,2,1],heappop(heap) 弹出堆中的最小值并重新维护
+        #return [-x for x in heap] # 也 OK 
+
+        return [-heapq.heappop(heap) for _ in range(k)]
+``` 
+
+## 14. 前K个高频元素
+
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素
+
+ps: 1.你的算法的时间复杂度必须优于 O(n log n) , n 是数组的大小, 你可以按任意顺序返回答案
+
+347\. 前K个高频元素（easy） [力扣](https://leetcode-cn.com/problems/top-k-frequent-elements/description/)
+
+示例 1:
+
+```html
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+
+输入: nums = [1], k = 1
+输出: [1]
+```
+
+```python
+class Solution:
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        dic = {} # dic = Counter(nums) call func
+        for num in nums:  # 统计个数
+            dic[num] = dic.get(num, 0) + 1
+
+        heap, res = [], []
+        for i in dic:
+            heapq.heappush(heap, (-dic[i], i)) # 建堆
+
+        for i in range(k):
+            tmp = heapq.heappop(heap)
+            res.append(tmp[1])
+
+        return res 
+``` 
+
+## 15. 数组中的第K个最大元素
+
+在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素.
+
+k 总是有效的，且 1 ≤ k ≤ 数组的长度
+
+215\. 数组中的第K个最大元素（middle） [力扣](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/description/)
+
+示例 1:
+
+```html
+输入: [3,2,1,5,6,4] 和 k = 2
+输出: 5
+
+输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
+输出: 4
+```
+
+```python
+class Solution:
+    import heapq
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        h = nums[: k] # k 总是有效
+        heapq.heapify(h) # 列表原地间堆
+
+        for i in range(k, len(nums)):
+            if nums[i] > h[0]:
+                #heapreplace(heap,x) 替换堆中的最小元素，并用x代替，会自动调整堆结构
+                #heapreplace， This is more efficient than heappop() followed by heappush()
+                #heapq.heapreplace(h, nums[i]) #OK的
+                
+                #heapreplace 比 下面的高效
+                heapq.heappop(h) #弹出堆中的第一个元素，会自动调整堆结构
+                heapq.heappush(h,nums[i]) #把元素x压到堆中，会自动调整堆结构
+                
+        return h[0]
+``` 
+
+## 16. 查找和最小的K对数字
+
+给定两个以升序排列的整形数组 nums1 和 nums2, 以及一个整数 k。
+
+定义一对值 (u,v)，其中第一个元素来自 nums1，第二个元素来自 nums2。
+
+找到和最小的 k 对数字 (u1,v1), (u2,v2) ... (uk,vk)
+
+373\. 查找和最小的K对数字（middle） [力扣](https://leetcode-cn.com/problems/find-k-pairs-with-smallest-sums/description/)
+
+示例 1:
+
+```html
+输入: nums1 = [1,7,11], nums2 = [2,4,6], k = 3
+输出: [1,2],[1,4],[1,6]
+解释: 返回序列中的前 3 对数：
+     [1,2],[1,4],[1,6],[7,2],[7,4],[11,2],[7,6],[11,4],[11,6]
+
+输入: nums1 = [1,1,2], nums2 = [1,2,3], k = 2
+输出: [1,1],[1,1]
+解释: 返回序列中的前 2 对数：
+     [1,1],[1,1],[1,2],[2,1],[1,2],[2,2],[1,3],[1,3],[2,3]
+
+输入: nums1 = [1,2], nums2 = [3], k = 3 
+输出: [1,3],[2,3]
+解释: 也可能序列中所有的数对都被返回:[1,3],[2,3]
+```
+
+```python
+
+class Solution:
+    def kSmallestPairs(self, nums1: List[int], nums2: List[int], k: int) -> List[List[int]]:
+        import heapq
+
+        heap = []
+        for num1 in nums1:
+            for num2 in nums2:
+                if len(heap) < k:
+                    heapq.heappush(heap, (-(num1 + num2) , [num1, num2]))
+                else:
+                    if num1 + num2 < -heap[0][0]:
+                        # heapq.heappop(heap) #分解动作
+                        # heapq.heappush(heap, (-(num1 + num2), [num1, num2]))
+                        
+                        #heapreplace， This is more efficient than heappop() followed by heappush()
+                        heapq.heapreplace(heap, (-(num1 + num2), [num1, num2]))
+
+        return [item[1] for item in heap]
 ``` 
