@@ -624,12 +624,17 @@ class Solution:
             return True
         
         # 分别定义左右子树的高度
-        left_depth = 0
+        """
+        left_depth = 0 # 可以直接用下面的2句替代
         right_depth = 0
         if root.left:
             left_depth = self.get_max_depth(root.left)
         if root.right:
             right_depth = self.get_max_depth(root.right)
+        """
+        
+        left_depth = self.get_max_depth(root.left)
+        right_depth = self.get_max_depth(root.right)
             
         if abs(left_depth - right_depth) > 1:
             return False
