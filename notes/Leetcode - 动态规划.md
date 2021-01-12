@@ -412,6 +412,15 @@ class Solution:
 
 现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
 
+```html
+
+   提示：
+   m == obstacleGrid.length
+   n == obstacleGrid[i].length
+   1 <= m, n <= 100
+   obstacleGrid[i][j] 为 0 或 1
+```
+
 63\. 不同路径 II（middle） [力扣](https://leetcode-cn.com/problems/unique-paths-ii/description/)
 
 示例 1:
@@ -434,12 +443,9 @@ class Solution:
 ```python
 class Solution:
     def uniquePathsWithObstacles(self, obstacleGrid: List[List[int]]) -> int:
-        # 典型 dp 问题
+        # 典型 dp 问题  提示了 1 <= rows, cols <= 100
         rows = len(obstacleGrid)
-        if rows < 1:return 0
-
         cols = len(obstacleGrid[0])
-        if cols < 1:return 0
 
         if obstacleGrid[0][0] == 1:return 0
         #dp = [[1 for _ in range(cols)] for _ in range(rows)]
