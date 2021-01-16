@@ -118,7 +118,23 @@ s = "axc", t = "ahbgdc"   返回 false
 
 ```python
 class Solution:
+
     def isSubsequence(self, s: str, t: str) -> bool:
+        i = 0 # 双指针
+        n = len(s)
+        for j in range(len(t)):
+            if i == n: return True # 已经提前找到
+
+            if s[i] == t[j]:
+                i += 1
+
+            #前面2个if可以合并为1个 if
+            # if i < n and s[i] == t[j]:
+            #     i += 1
+
+        return i == n
+
+    def isSubsequence_v1(self, s: str, t: str) -> bool:
         #双指针
         m, n = len(s), len(t)
         i, j = 0, 0 # i为慢指针，j为快指针
