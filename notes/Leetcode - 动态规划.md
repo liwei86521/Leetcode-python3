@@ -978,6 +978,16 @@ class Solution:
             sell[i] = max(sell[i-1], prices[i]+hold[i-1])
 
         return sell[-1]
+        
+    def maxProfit(self, prices: List[int]) -> int:
+        """ leetcode 超时 """
+        res = 0
+        n = len(prices)
+        for i in range(1, n):
+            for j in range(i):
+                res = max(res, prices[i]-prices[j])
+
+        return res
     """
 
 ``` 
