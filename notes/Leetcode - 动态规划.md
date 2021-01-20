@@ -1041,6 +1041,26 @@ class Solution:
     
         return dp[-1][0]
     
+
+    def maxProfit_v2(self, prices: List[int]) -> int:
+        # dp_hold[i] 为 第i天持有可获得的最大收益
+        # dp_cash[i] 为 第i天卖掉可获得的最大收益
+        dp_hold = [float("-inf")] * len(prices)
+        dp_cash = [0] * len(prices)
+
+        # 初始值 设定
+        dp_hold[0] = -prices[0]
+        dp_cash[0] = 0
+
+        for i in range(1, len(prices)):
+            #第i天持有股票有2种情况 前一天持有 或者 今天买进持有
+            dp_hold[i] = max(dp_hold[i-1], dp_cash[i-1]-prices[i])
+
+            #第i天持有Cash有2种情况 前一天卖掉 或者 今天卖掉
+            dp_cash[i] = max(dp_cash[i-1], dp_hold[i-1]+prices[i])
+
+        return dp_cash[-1]
+        
     """
     def maxProfit(self, prices: List[int]) -> int:
         # 典型贪心算法, dp
