@@ -1729,6 +1729,43 @@ class Solution:
                         res = s[i:j+1]
 
         return res
+        
+    def longestPalindrome_v2(self, s: str) -> str:
+        n = len(s)
+        if n <= 1: return s
+
+        # 状态 dp[i][j] 表示子串 s[i:j+1]是否为回文子串
+        # 状态转移方程 dp[i][j] = (s[i] == s[j]) and (dp[i+1][j-1])
+        # dp[i+1][j-1]边界条件前提是 j-1-(i+1)+1 < 2  --->   j - i < 3
+        dp = [[False] * n for _ in range(n)]  # 二维dp
+
+        for i in range(n):  # 初始化，单个字符也是回文
+            dp[i][i] = True
+
+        longest_l = 1  # 用于判断是否更新res  初始值不能设为0 eg: "ab"
+        res = s[0]  # 作为返回值进行return
+
+        for j in range(1, n):
+            for i in range(0, j):
+                # 状态转移方程：如果头尾字符相等并且中间也是回文
+                # 在头尾字符相等的前提下，如果收缩以后不构成区间（最多只有 1 个元素），直接返回 True
+                # 否则要继续看收缩以后的区间的回文性  重点理解 or 的短路性质在这里的作用
+                # #查看 dp[l+1,r-1] 收缩以后的区间的回文性 eg:s="bababd"
+                # if s[i] == s[j] and (j - i <= 2 or dp[i + 1][j - 1]):
+                #     dp[i][j] = True
+
+                if s[i] == s[j]: # 下面7行是对上面2行的理解
+                    if j-i <= 2:
+                        dp[i][j] = True
+                    else:
+                        dp[i][j] = dp[i+1][j-1]
+
+                # 如果 dp[i][j] 表示子串 s[i:j+1]是否为回文子串 回文的话
+                if dp[i][j] and j - i + 1 > longest_l:
+                    longest_l = j - i + 1
+                    res = s[i:j + 1]
+
+        return res
 
 ``` 
 
