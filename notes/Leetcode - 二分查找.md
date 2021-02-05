@@ -80,6 +80,26 @@ class Solution:
 ```python
 class Solution:
     def isPerfectSquare(self, num: int) -> bool:
+        left, right = 1, num # 同一种模式
+        while (left + 1 < right):
+            mid = left + (right -left)//2
+
+            tmp = mid*mid
+            if tmp <= num:
+                left = mid
+            else:
+                right = mid
+
+        # 循环退出的时候left, right是2个相邻的数，且left < right
+        if left * left == num:
+            return True
+
+        if right * right == num:
+            return True
+
+        return False
+
+    def isPerfectSquare(self, num: int) -> bool:
         # 二分法
         if num <= 1:
             return True
