@@ -275,7 +275,6 @@ class Solution:
         
         queue = [root] # 第0层
         while queue:
-            size = len(queue) #循环开始时，队列中的元素个数就是当前层结点的个数
             #  把一层的结点值都放进来，如果遇到空结点，放置 0
             # 因为题目说了 每个节点的值都是唯一的、范围为 1 到 100 的整数
             temp = [] # 下一层所有节点，ps 包括 None节点
