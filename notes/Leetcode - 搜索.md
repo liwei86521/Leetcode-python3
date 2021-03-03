@@ -1495,6 +1495,22 @@ class Solution:
 
         self.dfs(root.left, total - root.val) 
         self.dfs(root.right, total - root.val)
+	
+class Solution:
+    def pathSum(self, root: TreeNode, sum: int) -> int:
+        if not root:
+            return 0
+
+        def dfs(nodes, target):
+            if nodes is None:
+                return 0
+		
+            if target-nodes.val == 0:
+                return dfs(nodes.left, target-nodes.val) + dfs(nodes.right, target-nodes.val) + 1
+            else:
+                return dfs(nodes.left, target-nodes.val) + dfs(nodes.right,target-nodes.val)
+
+        return dfs(root, sum) + self.pathSum(root.left, sum) + +self.pathSum(root.right, sum)
 
 ``` 
 
